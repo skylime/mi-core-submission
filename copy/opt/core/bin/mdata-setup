@@ -1,0 +1,2 @@
+#!/bin/bash
+/opt/core/bin/spiped-configure-smf api-redis decrypt [::]:63790 [127.0.0.1]:6379 $(mdata-get io.core:api_redis_key)
