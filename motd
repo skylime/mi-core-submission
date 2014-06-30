@@ -1,7 +1,2 @@
-   __        .                   .
- _|  |_      | .-. .  . .-. :--. |-
-|_    _|     ;|   ||  |(.-' |  | |
-  |__|   `--'  `-' `;-| `-' '  ' `-'
-                   /  ; %brand% (%name% %version%)
-                   `-'  %homepage% 
-
+%brand% (%name% %version%)
+%homepage%
