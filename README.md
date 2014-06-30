@@ -9,6 +9,8 @@ Please refer to https://github.com/joyent/mibe for use of this repo.
 - <code>api_redis_key</code>: base64 encoded spipe key for api server
 - <code>mbox_lmtp_addr</code>: ip or hostname of lmtp server
 - <code>mbox_lmtp_key</code>: base64 encoded spipe key for lmtp server
+- <code>mx_ssl_cert</code>: ssl cert for smtp in pem format
+- <code>mx_ssl_key</code>: ssl key for smtp in pem format
 
 - <code>domainkey</code>: Default Domainkey for DKIM
 - <code>srs_secret</code>: secret for generating SRS strings
@@ -16,3 +18,6 @@ Please refer to https://github.com/joyent/mibe for use of this repo.
 
 ## services
 
+- <code>25/tcp</code>: smtp
+- <code>465/tcp</code>: smtp encrypted
+- <code>587/tcp</code>: smtp encrypted
