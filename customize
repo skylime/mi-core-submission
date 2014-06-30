@@ -23,6 +23,9 @@ rm /tmp/mdata-setup.xml
 
 # Configuring image specific packages
 echo "* Configuring image specific packages.";
+# Exim
+pkg_add http://pkgsrc.smartos.skylime.net/skylime-extra/2014Q1/x86_64/hiredis-0.11.0.tgz
+pkg_add http://pkgsrc.smartos.skylime.net/skylime-extra/2014Q1/x86_64/exim-4.82nb1.tgz
 
 # Clean up
 echo "* Cleaning up."
@@ -30,3 +33,4 @@ rm -rf /root/*
 
 # Prepare image for provisioning
 sm-prepare-image -y
+

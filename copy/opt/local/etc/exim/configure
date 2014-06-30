@@ -13,6 +13,12 @@ SRS_HASH_LENGTH=20
 SRS_DSN_TIMEOUT=10
 SRS_URL=http://www.infradead.org/rpr.html
 
+# Leave primary hostname unset to use uname
+primary_hostname =
+
+# Default Mailbox Server
+MAILBOX_SERVER = 127.0.0.1
+
 .include LOCALCONF
 
 domainlist local_domains = LOCALDOMAIN : $primary_hostname
@@ -254,15 +260,13 @@ begin transports
 		interface = SMTPINTERFACE
 		dkim_domain = ${sender_address_domain}
 		dkim_selector = dkim
-#		dkim_private_key = ${lookup redis{HGET domainkey *@${domain}}}
-		dkim_private_key = /etc/exim4/dkim/core.io.key
+		dkim_private_key = DEFAULT_DOMAINKEY
 		dkim_canon = relaxed
 	#>> Maildir at this host
 	localdir:
 		driver = appendfile
 		user = mail
 		maildir_format
-#		directory = MAILSTORE/$domain/$local_part/
 		delivery_date_add
 		envelope_to_add
 		return_path_add

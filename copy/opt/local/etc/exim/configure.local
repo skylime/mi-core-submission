@@ -1,12 +1,7 @@
-primary_hostname = lb1-muc.srv.skylime.net
-
-# Default Mailbox Server
-MAILBOX_SERVER = 80.190.131.194
-
 # Default Domainkey
-DEFAULT_DOMAINKEY = /etc/exim4/dkim/core.io.key
+DEFAULT_DOMAINKEY = 
 
 # Secrets for SRS-Hash 
 # Define old an new to be able to change secrets
-SRS_SECRET = secret1
-SRS_OLD_SECRET = secret2
+SRS_SECRET =
+SRS_OLD_SECRET =
