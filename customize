@@ -14,6 +14,10 @@ echo "* Enable mdata-setup script"
 svccfg import /tmp/mdata-setup.xml
 rm /tmp/mdata-setup.xml
 
+echo "* Create clamav logging directory"
+mkdir -p /var/log/clamav
+chown clamav:clamav /var/log/clamav
+
 # Configuring image specific packages
 echo "* Configuring image specific packages.";
 # Exim
