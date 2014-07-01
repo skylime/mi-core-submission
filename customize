@@ -25,6 +25,7 @@ mkdir -p /opt/local/etc/exim/ssl
 echo "* Create spamd group and user"
 groupadd spamd
 useradd -d /var/spamassassin -c "spamassassin spamd user" -s /usr/bin/false -g spamd spamd
+passwd -N spamd
 
 # Change default permissions for spamd folder
 echo "* Update permissions for spamassassin folders"
