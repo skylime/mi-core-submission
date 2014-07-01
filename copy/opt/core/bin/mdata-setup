@@ -5,8 +5,8 @@
 /opt/core/bin/spiped-configure-smf mbox-lmtp encrypt [127.0.0.1]:24 [$(mdata-get mbox_lmtp_addr)]:2424 $(mdata-get mbox_lmtp_key)
 
 # for SSL
-$(mdata-get mx_ssl_cert) > /opt/local/etc/ssl/certs/exim.pem
-$(mdata-get mx_ssl_key)  > /opt/local/etc/ssl/private/exim.pem
+mdata-get mx_ssl > /opt/local/etc/exim/ssl/exim.pem
+chmod 400 /opt/local/etc/exim/ssl/exim.pem
 
 ##
 ## Exim special configuration

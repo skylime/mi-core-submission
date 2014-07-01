@@ -18,6 +18,9 @@ echo "* Create clamav logging directory"
 mkdir -p /var/log/clamav
 chown clamav:clamav /var/log/clamav
 
+echo "* Create ssl folder"
+mkdir -p /opt/local/etc/exim/ssl
+
 # Configuring image specific packages
 echo "* Configuring image specific packages.";
 # Exim
