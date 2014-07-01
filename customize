@@ -21,6 +21,20 @@ chown clamav:clamav /var/log/clamav
 echo "* Create ssl folder"
 mkdir -p /opt/local/etc/exim/ssl
 
+# Create extra user for spamd
+echo "* Create spamd group and user"
+groupadd spamd
+useradd -d /var/spamassassin -c "spamassassin spamd user" -s /usr/bin/false -g spamd spamd
+
+# Change default permissions for spamd folder
+echo "* Update permissions for spamassassin folders"
+chown -R spamd:spamd /var/spamassassin
+chown -R spamd:spamd /opt/local/etc/spamassassin
+
+# Import spamd manifest
+svccfg import /tmp/spamd.xml
+rm /tmp/spamd.xml
+
 # Configuring image specific packages
 echo "* Configuring image specific packages.";
 # Exim
