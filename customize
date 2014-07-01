@@ -32,8 +32,14 @@ chown -R spamd:spamd /var/spamassassin
 chown -R spamd:spamd /opt/local/etc/spamassassin
 
 # Import spamd manifest
+echo "* Import spamd manifest"
 svccfg import /tmp/spamd.xml
 rm /tmp/spamd.xml
+
+# Update spamd and clamd
+echo "* Update spamd and clamd database"
+/opt/local/bin/freshclam
+sudo -u spamd /opt/local/bin/sa-update
 
 # Configuring image specific packages
 echo "* Configuring image specific packages.";
