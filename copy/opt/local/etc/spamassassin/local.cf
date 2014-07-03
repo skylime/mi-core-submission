@@ -1,0 +1,3 @@
+# Configuration File for spamassassin
+# using pyzor hash sharing system
+pyzor_options --homedir /copy/opt/local/etc/spamassassin
