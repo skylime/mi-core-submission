@@ -1,7 +1,3 @@
 # Default Domainkey
 DEFAULT_DOMAINKEY = 
 
-# Secrets for SRS-Hash 
-# Define old an new to be able to change secrets
-SRS_SECRET =
-SRS_OLD_SECRET =
