@@ -63,11 +63,6 @@ begin acl
 		#>> Hosts listed on relaylist are allowed to submit messages
 		accept
 		  hosts         = +relay_from_hosts
-		#>> deny if listed at spamhaus
-		deny
-		  message       = Sorry: $sender_host_address failed in Reverse DNS Lookup (get serious!)
-		  log_message   = $sender_host_address failed in Reverse DNS Lookup - Connection denied after HELO
-		  !verify		= reverse_host_lookup
 
 	acl_check_rcpt:
 		#>> deny if no HELO/EHLO send first
