@@ -126,7 +126,6 @@ begin transports
 	#>> smtp
 	remote_smtp:
 		driver = smtp
-		interface = SMTPINTERFACE
 		dkim_domain = ${qualify_domain}
 		dkim_selector = dkim
 		dkim_private_key = DEFAULT_DOMAINKEY
