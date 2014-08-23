@@ -2,7 +2,7 @@
 # Configure exim with mdata information
 
 # for SSL
-mdata-get mx_ssl > /opt/local/etc/exim/ssl/exim.pem
+mdata-get submission_ssl > /opt/local/etc/exim/ssl/exim.pem
 chmod 400 /opt/local/etc/exim/ssl/exim.pem
 
 ## Exim special configuration
