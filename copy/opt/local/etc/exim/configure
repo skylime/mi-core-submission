@@ -8,9 +8,6 @@ MAILSTORE = /tmp
 ACCOUNTPREFIX 	= mail.account:obj:
 ALIASPREFIX 	= mail.alias:obj:
 
-# Leave primary hostname unset to use uname
-primary_hostname =
-
 .include LOCALCONF
 
 domainlist local_domains = LOCALDOMAIN : $primary_hostname
