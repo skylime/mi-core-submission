@@ -4,6 +4,7 @@
 # for SSL
 mdata-get submission_ssl > /opt/local/etc/exim/ssl/exim.pem
 chmod 400 /opt/local/etc/exim/ssl/exim.pem
+chown mail /opt/local/etc/exim/ssl/exim.pem
 
 ## Exim special configuration
 EXIMLOCAL=/opt/local/etc/exim/configure.local
@@ -15,3 +16,4 @@ echo "primary_hostname = $(/usr/sbin/mdata-get sdc:hostname)" >> $EXIMLOCAL
 # Default DKIM
 mdata-get dkim_private_key > /opt/local/etc/exim/domain.key
 echo "DEFAULT_DOMAINKEY = /opt/local/etc/exim/domain.key" >> $EXIMLOCAL
+

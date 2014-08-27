@@ -55,6 +55,7 @@ tls_on_connect_ports = 25 : 465 : 587
 begin acl
 	acl_check_helo:
 		#>> Hosts listed on submissionlist are allowed to submit messages
+		# accepts in either way - but for future use
 		accept
 		  hosts         = +submission_hosts
 		#>> Hosts listed on relaylist are allowed to submit messages
