@@ -46,7 +46,7 @@ tls_certificate = /opt/local/etc/exim/ssl/exim.pem
 tls_privatekey = /opt/local/etc/exim/ssl/exim.pem
 
 daemon_smtp_ports = 25 : 465 : 587
-tls_on_connect_ports = 25 : 465 : 587
+tls_on_connect_ports = 465 : 587
 
 
 #>>
