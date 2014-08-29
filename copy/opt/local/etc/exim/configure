@@ -88,7 +88,14 @@ begin acl
 		deny message = This message contains malware ($malware_name)
 		  demime = *
 		  malware = *
-		
+		#>> dont allow spoofing
+		deny message  = Your FROM must match your authenticated email user
+		  condition = \
+		    ${if or {\
+		        { !eqi{$authenticated_id} {$sender_address} } \
+		        { !eqi{$authenticated_id} {${address:$header_From:}} } \
+		    }}
+		  condition = ${if !eq{\*}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} spoofing_whitelist}}}}
 		# put headers in all messages (no matter if spam or not)
 		warn  spam = nobody:true
 		  add_header = X-Spam-Score: $spam_score
