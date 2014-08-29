@@ -175,6 +175,6 @@ login_auth:
 			{!eq{$auth1}{}} \
 			{!eq{$auth2}{}} \
 			{crypteq {$auth3}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} password }}}} \
-			{eq{0}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth2} submission_disabled}}}} \
+			{eq{0}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} submission_disabled}}}} \
 			}{yes}{no}}"
 
