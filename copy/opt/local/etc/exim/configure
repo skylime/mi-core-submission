@@ -95,7 +95,15 @@ begin acl
 		        { !eqi{$authenticated_id} {$sender_address} } \
 		        { !eqi{$authenticated_id} {${address:$header_From:}} } \
 		    }}
-		  condition = ${if !eq{\*}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} spoofing_whitelist}}}}
+		  condition = \
+		    ${if eq {${filter{<, ${lookup redis {HGET ACCOUNTPREFIX$authenticated_id spoofing_whitelist}} } \
+		      {or{ \
+		         {eq{$item}{\*}} \
+		        {eq{$item}{$sender_address}} \
+		        {eq{$item}{${address:$header_From:}}} \
+		        {eq{$item}{$sender_address_domain}} \ 
+		      }} \
+		    }}{} }
 		# put headers in all messages (no matter if spam or not)
 		warn  spam = nobody:true
 		  add_header = X-Spam-Score: $spam_score
