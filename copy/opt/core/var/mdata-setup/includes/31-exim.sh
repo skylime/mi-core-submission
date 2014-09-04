@@ -17,3 +17,8 @@ echo "primary_hostname = $(/usr/sbin/mdata-get sdc:hostname)" >> $EXIMLOCAL
 mdata-get dkim_private_key > /opt/local/etc/exim/domain.key
 echo "DEFAULT_DOMAINKEY = /opt/local/etc/exim/domain.key" >> $EXIMLOCAL
 
+if mdata-get dkim_selector 1>/dev/null 2>&1; then
+	echo "DKIM_SELECTOR = $(mdata-get dkim_selector)" >> $EXIMLOCAL
+else
+	echo "DKIM_SELECTOR = dkim" >> $EXIMLOCAL
+fi
