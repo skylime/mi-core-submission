@@ -1,12 +1,13 @@
 # $Id$
 # Copyright 2014 core.io
+# vim: noai:ts=4:sw=4
 
 LOCALCONF = /opt/local/etc/exim/configure.local
 MAILSTORE = /tmp
 
 # Prefix for Mail- and Alias-Lookup
-ACCOUNTPREFIX 	= mail.account:obj:
-ALIASPREFIX 	= mail.alias:obj:
+ACCOUNTPREFIX = mail.account:obj:
+ALIASPREFIX   = mail.alias:obj:
 
 .include LOCALCONF
 
@@ -32,21 +33,21 @@ acl_smtp_helo = acl_check_helo
 acl_smtp_rcpt = acl_check_rcpt
 acl_smtp_data = acl_check_data
 
-never_users = root
-host_lookup = *
-rfc1413_hosts = *
-rfc1413_query_timeout = 5s
+never_users                = root
+host_lookup                = *
+rfc1413_hosts              = *
+rfc1413_query_timeout      = 5s
 ignore_bounce_errors_after = 2d
-timeout_frozen_after = 7d
-queue_only_load = 8
-message_size_limit = 100M
+timeout_frozen_after       = 7d
+queue_only_load            = 8
+message_size_limit         = 100M
+
+daemon_smtp_ports    = 25 : 465 : 587
+tls_on_connect_ports = 465 : 587
 
 tls_advertise_hosts = *
-tls_certificate = /opt/local/etc/exim/ssl/exim.pem
-tls_privatekey = /opt/local/etc/exim/ssl/exim.pem
-
-daemon_smtp_ports = 25 : 465 : 587
-tls_on_connect_ports = 465 : 587
+tls_certificate     = /opt/local/etc/exim/ssl/exim.pem
+tls_privatekey      = /opt/local/etc/exim/ssl/exim.pem
 
 
 #>>
@@ -57,77 +58,80 @@ begin acl
 		#>> Hosts listed on submissionlist are allowed to submit messages
 		# accepts in either way - but for future use
 		accept
-		  hosts         = +submission_hosts
+			hosts         = +submission_hosts
 		#>> Hosts listed on relaylist are allowed to submit messages
 		accept
-		  hosts         = +relay_from_hosts
+			hosts         = +relay_from_hosts
 		accept
 
 	acl_check_rcpt:
 		#>> deny strange characters
 		deny
-		  message       = Restricted characters in address
-		  local_parts   = ^[./|] : ^.*[@%!] : ^.*/\\.\\./
-		
+			message       = Restricted characters in address
+			local_parts   = ^[./|] : ^.*[@%!] : ^.*/\\.\\./
 		#>> local generated and authenticated mails will get header fixups 
 		accept
-		  authenticated = *
-		  hosts         = +submission_hosts
-		  control       = submission/domain=
-		
+			authenticated = *
+			hosts         = +submission_hosts
+			control       = submission/domain=
 		#>> encrytion only for non-local
 		accept
-		  encrypted	= *
-		  authenticated = *
-
+			encrypted     = *
+			authenticated = *
+		#>> Default deny relay
 		deny
 		  message = relay not permitted - access prohibited
 
 	acl_check_data:
-		#>> the clamav job 
-		deny message = This message contains malware ($malware_name)
-		  demime = *
-		  malware = *
+		#>> the clamav job
+		deny
+			message = This message contains malware ($malware_name)
+			demime  = *
+			malware = *
 		#>> dont allow spoofing
-		deny message  = Your FROM must match your authenticated email user
-		  condition = \
-		    ${if or {\
-		        { !eqi{$authenticated_id} {$sender_address} } \
-		        { !eqi{$authenticated_id} {${address:$header_From:}} } \
-		    }}
-		  condition = \
-		    ${if eq {${filter{<, ${lookup redis {HGET ACCOUNTPREFIX$authenticated_id spoofing_whitelist}} } \
-		      {or{ \
-		         {eq{$item}{\*}} \
-		        {eq{$item}{$sender_address}} \
-		        {eq{$item}{${address:$header_From:}}} \
-		        {eq{$item}{$sender_address_domain}} \ 
-		      }} \
-		    }}{} }
-		# put headers in all messages (no matter if spam or not)
-		warn  spam = nobody:true
-		  add_header = X-Spam-Score: $spam_score
-		  add_header = X-Spam-Level: $spam_bar
-		# put Spam Flag in messages with score > 5
-		warn spam = nobody:true
-		  condition = ${if >{$spam_score_int}{50}{true}{false}}
-		  add_header = X-Spam-Flag: YES
-		  add_header = X-Spam-Report: $spam_report
-		# reject spam at high scores (> 12)
-		deny message = This message scored $spam_score spam points.
-		  spam = nobody:true
-		  condition = ${if >{$spam_score_int}{120}{true}{false}}
+		deny
+			message   = Your FROM must match your authenticated email user
+			condition = \
+			    ${if or {\
+			        { !eqi{$authenticated_id} {$sender_address} } \
+			        { !eqi{$authenticated_id} {${address:$header_From:}} } \
+			    }}
+			condition = \
+			    ${if eq {${filter{<, ${lookup redis {HGET ACCOUNTPREFIX$authenticated_id spoofing_whitelist}} } \
+			      {or{ \
+			        {eq{$item}{\*}} \
+			        {eq{$item}{$sender_address}} \
+			        {eq{$item}{${address:$header_From:}}} \
+			        {eq{$item}{$sender_address_domain}} \ 
+			      }} \
+			    }}{} }
+		#>> put headers in all messages (no matter if spam or not)
+		warn
+			spam       = nobody:true
+			add_header = X-Spam-Score: $spam_score
+			add_header = X-Spam-Level: $spam_bar
+		#>> put Spam Flag in messages with score > 5
+		warn
+			spam       = nobody:true
+			condition  = ${if >{$spam_score_int}{50}{true}{false}}
+			add_header = X-Spam-Flag: YES
+			add_header = X-Spam-Report: $spam_report
+		#>> reject spam at high scores (> 12)
+		deny
+			message   = This message scored $spam_score spam points.
+			spam      = nobody:true
+			condition = ${if >{$spam_score_int}{120}{true}{false}}
 		accept
+
 
 #>>
 #>> router
 #>>
 begin routers
-
 	#>> dnslookup - for all mails to all recipients
 	lookuphost:
-		driver = dnslookup
-		transport = remote_smtp
+		driver              = dnslookup
+		transport           = remote_smtp
 		ignore_target_hosts = 0.0.0.0 : 127.0.0.0/8
 		no_more
 
@@ -138,17 +142,17 @@ begin routers
 begin transports
 	#>> smtp
 	remote_smtp:
-		driver = smtp
-		dkim_domain = ${qualify_domain}
-		dkim_selector = DKIM_SELECTOR
+		driver           = smtp
+		dkim_domain      = ${qualify_domain}
+		dkim_selector    = DKIM_SELECTOR
 		dkim_private_key = DEFAULT_DOMAINKEY
-		dkim_canon = relaxed
+		dkim_canon       = relaxed
+
 
 #>>
 #>> retry
 #>>
 begin retry
-#	*                      *           F,2h,15m; G,16h,1h,1.5; F,24d,6h
 	*                      *           F,2h,15m; G,16h,1h,1.5; F,4d,6h
 
 
@@ -162,34 +166,32 @@ begin rewrite
 #>> authenticators
 #>>
 begin authenticators
-
-plain_auth:
-	# When Exim is authenticating as a client, it skips any authenticator whose client_condition expansion yields 0
-	client_condition = 0
-	driver = plaintext
-	public_name = PLAIN
-	server_advertise_condition = ${if eq{$tls_cipher}{}{false}{true}}
-	server_prompts             = :
-	server_set_id = $auth2
-	server_condition = "\
-		${if and { \
-			{!eq{$auth2}{}} \
-			{!eq{$auth3}{}} \
-			{crypteq {$auth3}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth2} password }}}} \
-			{eq{0}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth2} submission_disabled}}}} \
+	plain_auth:
+		# When Exim is authenticating as a client, it skips any authenticator whose client_condition expansion yields 0
+		client_condition           = 0
+		driver                     = plaintext
+		public_name                = PLAIN
+		server_advertise_condition = ${if eq{$tls_cipher}{}{false}{true}}
+		server_prompts             = :
+		server_set_id              = $auth2
+		server_condition           = "\
+			${if and { \
+			    {!eq{$auth2}{}} \
+			    {!eq{$auth3}{}} \
+			    {crypteq {$auth3}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth2} password }}}} \
+			    {eq{0}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth2} submission_disabled}}}} \
 			}{yes}{no}}"
-
-login_auth:
-	driver = plaintext
-	public_name = LOGIN
-	server_advertise_condition = ${if eq{$tls_cipher}{}{false}{true}}
-	server_prompts             = Username:: : Password::
-	server_set_id = $auth1
-	server_condition = "\
-		${if and { \
-			{!eq{$auth1}{}} \
-			{!eq{$auth2}{}} \
-			{crypteq {$auth3}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} password }}}} \
-			{eq{0}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} submission_disabled}}}} \
+	login_auth:
+		driver                     = plaintext
+		public_name                = LOGIN
+		server_advertise_condition = ${if eq{$tls_cipher}{}{false}{true}}
+		server_prompts             = Username:: : Password::
+		server_set_id              = $auth1
+		server_condition           = "\
+			${if and { \
+			    {!eq{$auth1}{}} \
+			    {!eq{$auth2}{}} \
+			    {crypteq {$auth3}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} password }}}} \
+			    {eq{0}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} submission_disabled}}}} \
 			}{yes}{no}}"
 
