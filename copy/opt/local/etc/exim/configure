@@ -11,7 +11,7 @@ ALIASPREFIX   = mail.alias:obj:
 
 .include LOCALCONF
 
-domainlist local_domains = LOCALDOMAIN : $primary_hostname
+domainlist local_domains = $primary_hostname : localhost
 
 redis_servers = 127.0.0.1//
 
@@ -23,10 +23,8 @@ spamd_address = 127.0.0.1 11333
 
 #>> submission from a local MUA or script 
 #>> messages from these hosts will get fixups
+#>> !warning: these hosts do not have to authenticate! 
 hostlist submission_hosts = <; 127.0.0.1;:1
-
-#>> relay from these hosts
-hostlist relay_from_hosts = <; 127.0.0.1;:1
 
 #>> ACLs to use
 acl_smtp_helo = acl_check_helo
@@ -59,9 +57,9 @@ begin acl
 		# accepts in either way - but for future use
 		accept
 			hosts         = +submission_hosts
-		#>> Hosts listed on relaylist are allowed to submit messages
-		accept
-			hosts         = +relay_from_hosts
+		deny
+			hosts         = +blacklist_hosts
+			message       = host not allowed
 		accept
 
 	acl_check_rcpt:
@@ -71,7 +69,6 @@ begin acl
 			local_parts   = ^[./|] : ^.*[@%!] : ^.*/\\.\\./
 		#>> local generated and authenticated mails will get header fixups 
 		accept
-			authenticated = *
 			hosts         = +submission_hosts
 			control       = submission/domain=
 		#>> encrytion only for non-local
@@ -83,6 +80,9 @@ begin acl
 		  message = relay not permitted - access prohibited
 
 	acl_check_data:
+		#>> local generated
+		accept
+			hosts         = +submission_hosts
 		#>> the clamav job
 		deny
 			message = This message contains malware ($malware_name)
