@@ -11,6 +11,9 @@ ALIASPREFIX   = mail.alias:obj:
 
 .include LOCALCONF
 
+# security reasons
+smtp_accept_max = 500
+
 domainlist local_domains = $primary_hostname : localhost
 
 redis_servers = 127.0.0.1//
