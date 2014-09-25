@@ -1,7 +1,12 @@
-## Changelog of mi-core-submission
+## Change Log
 
-### 14.2.0 (2014/09/21 17:19 +00:00)
+### 14.2.1 (2014/09/25 20:15 +00:00)
+- [71b7571](https://github.com/skylime/mi-core-submission/commit/71b7571e4dafecfa9373b75819b64334f6af1061) Domain for DKIM set to sender_address_domain, not servers domain (@BroSys)
+- [9f7b47c](https://github.com/skylime/mi-core-submission/commit/9f7b47c99669f85c7ca43cc400e8a378969bf1cc) max connections set to 500 (@BroSys)
+- [db09251](https://github.com/skylime/mi-core-submission/commit/db0925141a83f3613017b4936f97a269527249f3) update to new core-base image: a6fb1ff0-4333-11e4-a0e1-370c81688134 (@drscream)
+- [8fce56c](https://github.com/skylime/mi-core-submission/commit/8fce56cd0d0a09c816011a63396cc938b51f3049) version update (@drscream)
 
+### 14.2.0 (2014/09/21 17:20 +00:00)
 - [3fe73b4](https://github.com/skylime/mi-core-submission/commit/3fe73b4e91d6b85f38c4f1b40893d731f2156ac0) Initial release (@dcrudgington)
 - [f257eb3](https://github.com/skylime/mi-core-submission/commit/f257eb37c85ba5064d7780b282408e950d3cd34d) Added LICENSE and copy directory (@dcrudgington)
 - [d631523](https://github.com/skylime/mi-core-submission/commit/d6315237ff15b5d07a9dd1cc1dc3e0e55fe84414) Added var/zoneinit/includes directory (@dcrudgington)
@@ -42,11 +47,11 @@
 - [3700b82](https://github.com/skylime/mi-core-submission/commit/3700b829c04f4cd61dd86202189f62c07c88a2b3) added pyzor for spmassassin (@BroSys)
 - [55dd8f0](https://github.com/skylime/mi-core-submission/commit/55dd8f04ddae2c0f03bc70ddc3557934fcd43ebd) Merge branch 'master' of github.com:skylime/mi-core-mx (@BroSys)
 - [ee891ee](https://github.com/skylime/mi-core-submission/commit/ee891ee2c7f0c8ec0ea86b646730ba5e7f7015c7) typo in spamassassins config (@BroSys)
-- [b7aef33](https://github.com/skylime/mi-core-submission/commit/b7aef3347bd2fd6f7231458a36f96dbcbad3c3ff) missing munin plugin variables (@drscream)
-- [ff5ba90](https://github.com/skylime/mi-core-submission/commit/ff5ba9031e3c7032813cc4b892880071509ba804) use -s option for mdata enable (@drscream)
 - [52a221c](https://github.com/skylime/mi-core-submission/commit/52a221c2563b450bcb3beafcb3249d78d25e582d) Enable munin-node for mx server with some default and custom plugins (@drscream)
 - [3358960](https://github.com/skylime/mi-core-submission/commit/3358960c5958ec43b633173534fba9d42b123366) Add awesome fancy motd (@drscream)
+- [b7aef33](https://github.com/skylime/mi-core-submission/commit/b7aef3347bd2fd6f7231458a36f96dbcbad3c3ff) missing munin plugin variables (@drscream)
 - [c3c89d8](https://github.com/skylime/mi-core-submission/commit/c3c89d824484f134f10b483e66d9fbfb793d8335) fix plugin check for different munin stuff (@drscream)
+- [ff5ba90](https://github.com/skylime/mi-core-submission/commit/ff5ba9031e3c7032813cc4b892880071509ba804) use -s option for mdata enable (@drscream)
 - [189f2f2](https://github.com/skylime/mi-core-submission/commit/189f2f2d6ace826656501da7209db80ab8b0a550) move all mdata-setup for includes (@drscream)
 - [e6d7b4d](https://github.com/skylime/mi-core-submission/commit/e6d7b4de56b7cb699338a671c7863f1e531fc0b5) switch to munin community plugin repo and remove static file (@drscream)
 - [5fa27e8](https://github.com/skylime/mi-core-submission/commit/5fa27e8a673c3204faeabdd2107b462558acc0ff) get pyzor std-server (@BroSys)
@@ -100,3 +105,4 @@
 - [5a2ff59](https://github.com/skylime/mi-core-submission/commit/5a2ff5970ede3dc369dc28bde910846e7bb0effe) fixed mailrouting from localhost (@BroSys)
 - [c010b72](https://github.com/skylime/mi-core-submission/commit/c010b728aebfea2fe25c85e9bd258202c47f59f3) cleanup exim config (@drscream)
 - [42c0b86](https://github.com/skylime/mi-core-submission/commit/42c0b867d54b7c9f49c2cd01af0e930ef02ebd5d) Merge branch 'master' of github.com:skylime/mi-core-submission (@drscream)
+- [7bce276](https://github.com/skylime/mi-core-submission/commit/7bce27671d46ed6e603b72e5daf926c9e059c3f0) update changelog (@drscream)
