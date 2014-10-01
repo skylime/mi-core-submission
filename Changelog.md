@@ -1,13 +1,19 @@
 # Changelog
 
-## 14.2.4
+## 14.2.5
 
 ### New
 
 * version update. [Thomas Merkel]
 
+### Fix
+
+* typo for blacklist_hosts. [Thomas Merkel]
+
 ### Other
 
+* version update. [Thomas Merkel]
+* wrong version number in changelog. [Thomas Merkel]
 * fix bug for blacklisted hosts. [Boris Poblotzki]
 
 ## 14.2.3 (2014-09-28)
