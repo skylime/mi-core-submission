@@ -29,6 +29,10 @@ spamd_address = 127.0.0.1 11333
 #>> !warning: these hosts do not have to authenticate! 
 hostlist submission_hosts = <; 127.0.0.1;:1
 
+#>> hosts that are not allowed to submit mails
+#>> it's a ;-separated list to allow IPv6
+hostlist blacklist_host = <;
+
 #>> ACLs to use
 acl_smtp_helo = acl_check_helo
 acl_smtp_rcpt = acl_check_rcpt
