@@ -1,10 +1,15 @@
 # Changelog
 
-## 14.2.5
+## 14.2.6
 
 ### New
 
-* version update. [Thomas Merkel]
+* update to new core-base image 5f32cd38-4a1f-11e4-82e4-632b59542bc6. [Thomas Merkel]
+* create cronjob for exim verify script. [Thomas Merkel]
+* exim cron script to check panic log and verify database. [Thomas Merkel]
+* use also syslog for logging. [Thomas Merkel]
+
+## 14.2.5 (2014-10-01)
 
 ### Fix
 
@@ -13,6 +18,15 @@
 ### Other
 
 * version update. [Thomas Merkel]
+
+## 14.2.4 (2014-10-01)
+
+### New
+
+* version update. [Thomas Merkel]
+
+### Other
+
 * wrong version number in changelog. [Thomas Merkel]
 * fix bug for blacklisted hosts. [Boris Poblotzki]
 
@@ -21,6 +35,7 @@
 ### New
 
 * update to new core-base image 4771851c-473c-11e4-a5d7-2336565b77d9. [Thomas Merkel]
+* new munin plugin redis_replication_status. [Thomas Merkel]
 
 ## 14.2.2 (2014-09-27)
 
