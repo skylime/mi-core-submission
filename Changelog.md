@@ -1,6 +1,17 @@
 # Changelog
 
-## 14.2.6
+## 14.2.7
+
+### New
+
+* version update. [Thomas Merkel]
+
+### Fix
+
+* change tmpdir for spamd to use disk and not memory. [Thomas Merkel]
+* change clamd temp directory to /var/tmp to dont use memory for that. [Thomas Merkel]
+
+## 14.2.6 (2014-10-02)
 
 ### New
 
