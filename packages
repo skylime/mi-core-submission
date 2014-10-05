@@ -5,3 +5,5 @@ pyzor
 p5-DB_File
 redis
 py27-pip
+dovecot
+dovecot-pigeonhole
