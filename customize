@@ -64,6 +64,17 @@ ln -sf ../../../opt/local/sbin/exim /opt/local/sbin/sendmail
 echo "* Install rblwatch script"
 pip install rblwatch
 
+# Remove all examples dovecot configuration
+echo "* Remove all examples dovecot configuration"
+shopt -s extglob
+rm /opt/local/etc/dovecot/conf.d/!(core-*)
+rm /opt/local/etc/dovecot/*.ext
+rm /opt/local/etc/dovecot/dovecot-example.conf
+
+# Create ssl folder
+echo "* Create ssl folder"
+mkdir -p /opt/local/etc/dovecot/ssl
+
 # Activate munin plugins
 echo "* Activate munin plugins"
 for plugin in "${MUNIN_PLUGINS[@]}"; do
