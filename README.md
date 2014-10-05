@@ -21,7 +21,7 @@ This image is part of the following images:
 - `submission_ssl` [*]: ssl cert, key and CA for smtp in pem format
 - `dkim_private_key` [*]: Default Domainkey for DKIM
 - `proxy_mbox_ssl` [*]: ssl certificate for proxy to imap/pop server
-- `proxy_mbox_host` [*]: hostname of real imap/pop server (only ssl is supported on port 993)
+- `proxy_mbox_host` [*]: hostname of real imap/pop server (only ssl is supported)
 
 [*] is required to work properly.
 
