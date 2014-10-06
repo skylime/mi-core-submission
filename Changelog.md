@@ -23,6 +23,9 @@
 * Merge branch 'master' into extra/dovecot-proxy. [Thomas Merkel]
 * we are a gmbh now. [Thomas Merkel]
 * dont use a special port because we also like to support pop. [Thomas Merkel]
+* configure logadm. [Thomas Merkel]
+* version update of exim which include a patch for the proxy protocol. [Thomas Merkel]
+* fix for administrativ mails. [Boris Poblotzki]
 
 ## 14.2.7 (2014-10-03)
 
