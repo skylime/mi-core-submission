@@ -1,6 +1,30 @@
 # Changelog
 
-## 14.2.7
+## 14.2.8
+
+### New
+
+* update to new core-base image cd298780-4d55-11e4-addf-63835732c9d9. [Thomas Merkel]
+* new mdata var for proxy_host. [Thomas Merkel]
+* cleanup and create ssl folder for dovecot. [Thomas Merkel]
+* add dovecot minimal proxy config. [Thomas Merkel]
+* add dovecot packages. [Thomas Merkel]
+* version update of exim which include a patch for the proxy protocol. [Thomas Merkel]
+
+### Changes
+
+* update desc and name. [Thomas Merkel]
+* update readme with new variables. [Thomas Merkel]
+* rename to proxy_mbox_ variable. [Thomas Merkel]
+* modify motd. [Thomas Merkel]
+
+### Other
+
+* Merge branch 'master' into extra/dovecot-proxy. [Thomas Merkel]
+* we are a gmbh now. [Thomas Merkel]
+* dont use a special port because we also like to support pop. [Thomas Merkel]
+
+## 14.2.7 (2014-10-03)
 
 ### New
 
