@@ -1,6 +1,18 @@
 # Changelog
 
-## 14.2.7
+## 14.2.8
+
+### New
+
+* update to new core-base image cd298780-4d55-11e4-addf-63835732c9d9. [Thomas Merkel]
+* configure logadm. [Thomas Merkel]
+* version update of exim which include a patch for the proxy protocol. [Thomas Merkel]
+
+### Other
+
+* fix for administrativ mails. [Boris Poblotzki]
+
+## 14.2.7 (2014-10-03)
 
 ### New
 
