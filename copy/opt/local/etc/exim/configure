@@ -11,10 +11,13 @@ ALIASPREFIX   = mail.alias:obj:
 
 .include LOCALCONF
 
+# set primary hostname from macro
+primary_hostname = PRIMARY_HOSTNAME
+
 # security reasons
 smtp_accept_max = 500
 
-domainlist local_domains = $primary_hostname : localhost
+domainlist local_domains = PRIMARY_HOSTNAME : localhost
 
 redis_servers = 127.0.0.1//
 
@@ -28,6 +31,9 @@ spamd_address = 127.0.0.1 11333
 #>> messages from these hosts will get fixups
 #>> !warning: these hosts do not have to authenticate! 
 hostlist submission_hosts = <; 127.0.0.1;:1
+
+# special handling for rfc 2142 usernames and for root
+localpartlist rfc2142_localparts = postmaster :  abuse : noc : security : root
 
 #>> hosts that are not allowed to submit mails
 #>> it's a ;-separated list to allow IPv6
@@ -140,13 +146,23 @@ begin acl
 #>> router
 #>>
 begin routers
+
+       administrativ_mails:
+                driver          = redirect
+                local_parts     = +rfc2142_localparts
+                condition       = ${if or{ \
+                                    {inlist{${domain}}{${listnamed:local_domains}}} \
+                                    {eq{${domain}}{}} \
+                                   } }
+                data            = ADMIN_CONTACT
+                redirect_router = lookuphost
+
 	#>> dnslookup - for all mails to all recipients
 	lookuphost:
 		driver              = dnslookup
 		transport           = remote_smtp
 		ignore_target_hosts = 0.0.0.0 : 127.0.0.0/8
 		no_more
-
 
 #>>
 #>> transport
