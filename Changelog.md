@@ -1,6 +1,26 @@
 # Changelog
 
-## 14.2.8
+## 14.2.9
+
+### New
+
+* update to new core-base image ffefd524-4e1e-11e4-9998-bf5009186c28. [Thomas Merkel]
+
+### Fix
+
+* have a working pyzor installation. [Thomas Merkel]
+* logadm do not warn for empty or non existing files. [Thomas Merkel]
+
+### Other
+
+* Apply all changes from MX server also to submission server. [Thomas Merkel]
+
+    We only scan mails smaller than 20 MB, we check for spam on mails
+    smaller than 5 MB. Need to be sure the HOME folder is set correctly
+    for spamd. Set correct folder for bayes filter on spamd.
+
+
+## 14.2.8 (2014-10-06)
 
 ### New
 
