@@ -2,12 +2,12 @@
 # Copyright 2014 core.io
 # vim: noai:ts=4:sw=4
 
-LOCALCONF = /opt/local/etc/exim/configure.local
-MAILSTORE = /tmp
+LOCALCONF		= /opt/local/etc/exim/configure.local
+MAILSTORE		= /tmp
 
 # Prefix for Mail- and Alias-Lookup
-ACCOUNTPREFIX = mail.account:obj:
-ALIASPREFIX   = mail.alias:obj:
+ACCOUNTPREFIX	= mail.account:obj:
+ALIASPREFIX		= mail.alias:obj:
 
 # Scan Mails for Spam at ACL-time - otherwise set to 1
 DISABLEACLCHECK = 0
@@ -15,20 +15,20 @@ DISABLEACLCHECK = 0
 .include LOCALCONF
 
 # set primary hostname from macro
-primary_hostname = PRIMARY_HOSTNAME
+primary_hostname	= PRIMARY_HOSTNAME
 
 # security reasons
-smtp_accept_max = 500
+smtp_accept_max		= 500
 
 domainlist local_domains = PRIMARY_HOSTNAME : localhost
 
-redis_servers = 127.0.0.1//
+redis_servers		= 127.0.0.1//
 
 #>> AV Scanner - we use ClamAV at localhost port 3310
-av_scanner = clamd:127.0.0.1 3310
+av_scanner			= clamd:127.0.0.1 3310
 
 #>> SmapScanner - we use spamassassin
-spamd_address = 127.0.0.1 11333
+spamd_address		= 127.0.0.1 11333
 
 #>> submission from a local MUA or script 
 #>> messages from these hosts will get fixups
@@ -40,12 +40,12 @@ localpartlist rfc2142_localparts = postmaster :  abuse : noc : security : root
 
 #>> hosts that are not allowed to submit mails
 #>> it's a ;-separated list to allow IPv6
-hostlist blacklist_hosts = <;
+hostlist blacklist_hosts	= <;
 
 #>> ACLs to use
-acl_smtp_helo = acl_check_helo
-acl_smtp_rcpt = acl_check_rcpt
-acl_smtp_data = acl_check_data
+acl_smtp_helo				= acl_check_helo
+acl_smtp_rcpt				= acl_check_rcpt
+acl_smtp_data				= acl_check_data
 
 never_users					= root
 host_lookup					= *
@@ -56,17 +56,17 @@ timeout_frozen_after		= 7d
 queue_only_load				= 8
 message_size_limit			= 100M
 
-daemon_smtp_ports    = 25 : 465 : 587
-tls_on_connect_ports = 465 : 587
+daemon_smtp_ports			= 25 : 465 : 587
+tls_on_connect_ports		= 465 : 587
 
 tls_advertise_hosts = *
-tls_certificate     = /opt/local/etc/exim/ssl/exim.pem
-tls_privatekey      = /opt/local/etc/exim/ssl/exim.pem
+tls_certificate				= /opt/local/etc/exim/ssl/exim.pem
+tls_privatekey				= /opt/local/etc/exim/ssl/exim.pem
 
 #>> Logging
 #>> Syslog and extra exim log files
-log_file_path      = :syslog
-syslog_duplication = false
+log_file_path				= :syslog
+syslog_duplication			= false
 
 
 #>>
@@ -77,25 +77,25 @@ begin acl
 		#>> Hosts listed on submissionlist are allowed to submit messages
 		# accepts in either way - but for future use
 		accept
-			hosts         = +submission_hosts
+			hosts			= +submission_hosts
 		deny
-			hosts         = +blacklist_hosts
-			message       = host not allowed
+			hosts			= +blacklist_hosts
+			message			= host not allowed
 		accept
 
 	acl_check_rcpt:
 		#>> deny strange characters
 		deny
-			message       = Restricted characters in address
-			local_parts   = ^[./|] : ^.*[@%!] : ^.*/\\.\\./
+			message			= Restricted characters in address
+			local_parts		= ^[./|] : ^.*[@%!] : ^.*/\\.\\./
 		#>> local generated and authenticated mails will get header fixups 
 		accept
-			hosts         = +submission_hosts
-			control       = submission/domain=
+			hosts			= +submission_hosts
+			control			= submission/domain=
 		#>> encrytion only for non-local
 		accept
-			encrypted     = *
-			authenticated = *
+			encrypted		= *
+			authenticated	= *
 		#>> Default deny relay
 		deny
 		  message = relay not permitted - access prohibited
@@ -103,54 +103,53 @@ begin acl
 	acl_check_data:
 		#>> local generated
 		accept
-			hosts         = +submission_hosts
+			hosts			= +submission_hosts
 		#>> the clamav job
 		deny
-			message   = This message contains malware ($malware_name)
-			condition = ${if < {$message_size}{25M}}
-			demime    = *
-			malware   = *
+			message			= This message contains malware ($malware_name)
+			condition		= ${if < {$message_size}{25M}}
+			demime			= *
+			malware			= *
 		#>> dont allow spoofing
 		deny
-			message   = Your FROM must match your authenticated email user
-			condition = \
-			    ${if or {\
-			        { !eqi{$authenticated_id} {$sender_address} } \
-			        { !eqi{$authenticated_id} {${address:$header_From:}} } \
-			    }}
-			condition = \
-			    ${if eq {${filter{<, ${lookup redis {HGET ACCOUNTPREFIX$authenticated_id spoofing_whitelist}} } \
-			      {or{ \
-			        {eq{$item}{\*}} \
-			        {eq{$item}{$sender_address}} \
-			        {eq{$item}{${address:$header_From:}}} \
-			        {eq{$item}{$sender_address_domain}} \ 
-			      }} \
-			    }}{} }
+			message			= Your FROM must match your authenticated email user
+			condition		= \
+								${if or {\
+									{ !eqi{$authenticated_id} {$sender_address} } \
+									{ !eqi{$authenticated_id} {${address:$header_From:}} } \
+								}}
+			condition		= \
+								${if eq {${filter{<, ${lookup redis {HGET ACCOUNTPREFIX$authenticated_id spoofing_whitelist}} } \
+									{or{ \
+										{eq{$item}{\*}} \
+										{eq{$item}{$sender_address}} \
+										{eq{$item}{${address:$header_From:}}} \
+										{eq{$item}{$sender_address_domain}} \ 
+									}} \
+								}}{} }
 		#>> skip spam scanning for large msg (larger than 1M)
-# DEBUG HACK
 		accept
-            #>> if manually set to disable check at acl-time or if message is larger than 1MB
-			condition       = ${if or { {eq{DISABLEACLCHECK}{1}} {>{$message_size}{1M}}}}
-			log_message     = Spam scan skipped; message too large ($message_size)
-#			add_header      = X-Spam-Report: Spam scan skipped; message too large
+			#>> if manually set to disable check at acl-time or if message is larger than 1MB
+			condition		= ${if or { {eq{DISABLEACLCHECK}{1}} {>{$message_size}{1M}}}}
+			log_message		= Spam scan skipped; message too large ($message_size)
+#			add_header		= X-Spam-Report: Spam scan skipped; message too large
 			set acl_m_noscan = yes
 		#>> put headers in all messages (no matter if spam or not)
 		warn
-			spam       = nobody:true/defer_ok
-			add_header = X-Spam-Score: $spam_score
-			add_header = X-Spam-Level: $spam_bar
+			spam			= nobody:true/defer_ok
+			add_header		= X-Spam-Score: $spam_score
+			add_header		= X-Spam-Level: $spam_bar
 		#>> put Spam Flag in messages with score > 5
 		warn
-			spam       = nobody:true/defer_ok
-			condition  = ${if >{$spam_score_int}{50}{true}{false}}
-			add_header = X-Spam-Flag: YES
-			add_header = X-Spam-Report: $spam_report
+			spam			= nobody:true/defer_ok
+			condition		= ${if >{$spam_score_int}{50}{true}{false}}
+			add_header		= X-Spam-Flag: YES
+			add_header		= X-Spam-Report: $spam_report
 		#>> reject spam at high scores (> 12)
 		deny
-			message   = This message scored $spam_score spam points.
-			spam      = nobody:true/defer_ok
-			condition = ${if >{$spam_score_int}{120}{true}{false}}
+			message			= This message scored $spam_score spam points.
+			spam			= nobody:true/defer_ok
+			condition		= ${if >{$spam_score_int}{120}{true}{false}}
 		accept
 
 
@@ -158,40 +157,39 @@ begin acl
 #>> router
 #>>
 begin routers
+	administrativ_mails:
+		driver			= redirect
+		local_parts		= +rfc2142_localparts
+		condition		= ${if or{ \
+							{inlist{${domain}}{${listnamed:local_domains}}} \
+							{eq{${domain}}{}} \
+						} }
+		data			= ADMIN_CONTACT
+		redirect_router = lookuphost
 
-       administrativ_mails:
-                driver          = redirect
-                local_parts     = +rfc2142_localparts
-                condition       = ${if or{ \
-                                    {inlist{${domain}}{${listnamed:local_domains}}} \
-                                    {eq{${domain}}{}} \
-                                   } }
-                data            = ADMIN_CONTACT
-                redirect_router = lookuphost
+	#>> possible to scan mails at routing-time rather than at acl-time
+	spamcheck:
+		driver			= accept
+		no_verify
+		#>> if not scanned at ACL-Time
+		condition		= ${if eq {$acl_m_noscan}{yes}}
+		#>> and if not received from local spam scan engine
+		condition		= ${if !eq {$received_protocol}{spam-scanned}}
+		transport		= spamcheck
 
-        #>> possible to scan mails at routing-time rather than at acl-time
-        spamcheck:
-                driver                  = accept
-                no_verify
-                #>> if not scanned at ACL-Time
-                condition               = ${if eq {$acl_m_noscan}{yes}}
-                #>> and if not received from local spam scan engine
-                condition               = ${if !eq {$received_protocol}{spam-scanned}}
-                transport               = spamcheck
-
-        #>> mails scanned at routing-time can't be bounced at acl-time - so:
-        spambounce:
-                driver                  = accept
-                condition               = ${if eq {$received_protocol}{spam-scanned}}
-                condition               = ${if and {{def:h_X-Spam-Flag:}{eq {$h_X-Spam-Flag:}{YES}}}}
-                condition               = ${if def:h_X-Spam-Score:}
-				condition				= ${if >{${substr{-2}{$h_X-Spam-Score:}}${substr{-1}{1}{$h_X-Spam-Score:}}}{120}}
-                transport               = man_bounce
+	#>> mails scanned at routing-time can't be bounced at acl-time - so:
+	spambounce:
+		driver			= accept
+		condition		= ${if eq {$received_protocol}{spam-scanned}}
+		condition		= ${if and {{def:h_X-Spam-Flag:}{eq {$h_X-Spam-Flag:}{YES}}}}
+		condition		= ${if def:h_X-Spam-Score:}
+		condition		= ${if >{${substr{-2}{$h_X-Spam-Score:}}${substr{-1}{1}{$h_X-Spam-Score:}}}{120}}
+		transport		= man_bounce
 
 	#>> dnslookup - for all mails to all recipients
 	lookuphost:
-		driver              = dnslookup
-		transport           = remote_smtp
+		driver			= dnslookup
+		transport		= remote_smtp
 		ignore_target_hosts = 0.0.0.0 : 127.0.0.0/8
 		no_more
 
@@ -201,39 +199,37 @@ begin routers
 begin transports
 	#>> smtp
 	remote_smtp:
-		driver           = smtp
-		dkim_domain      = ${sender_address_domain}
-		dkim_selector    = DKIM_SELECTOR
-		dkim_private_key = DEFAULT_DOMAINKEY
-		dkim_canon       = relaxed
+		driver				= smtp
+		dkim_domain			= ${sender_address_domain}
+		dkim_selector		= DKIM_SELECTOR
+		dkim_private_key	= DEFAULT_DOMAINKEY
+		dkim_canon			= relaxed
 
-        #>> checking spam at routing time
-        spamcheck:
-                debug_print             = "T: spamassassin_pipe for $local_part@$domain"
-                driver                  = pipe
-                use_bsmtp               = true
-                transport_filter        = /opt/local/bin/spamc -F /opt/local/etc/spamassassin/spamc.conf
-                command                 = /opt/local/sbin/exim -C /opt/local/etc/exim/configure -oMr spam-scanned -bS -d+all -v
-                home_directory          = "/tmp"
-                current_directory       = "/tmp"
-                message_prefix          =
-                message_suffix          =
-				max_output		=	500k
-				return_output	=	true
+	#>> checking spam at routing time
+	spamcheck:
+		debug_print			= "T: spamassassin_pipe for $local_part@$domain"
+		driver				= pipe
+		use_bsmtp			= true
+		transport_filter	= /opt/local/bin/spamc -F /opt/local/etc/spamassassin/spamc.conf
+		command				= /opt/local/sbin/exim -C /opt/local/etc/exim/configure -oMr spam-scanned -bS -d+all -v
+		home_directory		= "/tmp"
+		current_directory	= "/tmp"
+		message_prefix		=
+		message_suffix		=
 
-        #>> bouncing mail because of Spam
-        man_bounce:
-                driver                  = autoreply
-				to						= $return_path
-                text                    = "We are very sorry, but the message you sent was declared as highrated Spam! \
-                                           If you think this is an error, please contact your provider. We apologise for any inconvenience."
+	#>> bouncing mail because of Spam
+		man_bounce:
+			driver			= autoreply
+			to				= $return_path
+			subject			= Your message: $h_subject:
+			text			= "We are very sorry, but the message you sent was declared as highrated Spam! \
+								If you think this is an error, please contact your provider. We apologise for any inconvenience."
 
 #>>
 #>> retry
 #>>
 begin retry
-	*                      *           F,2h,15m; G,16h,1h,1.5; F,4d,6h
-
+	*		*		F,2h,15m; G,16h,1h,1.5; F,4d,6h
 
 #>>
 #>> rewrite
@@ -247,30 +243,30 @@ begin rewrite
 begin authenticators
 	plain_auth:
 		# When Exim is authenticating as a client, it skips any authenticator whose client_condition expansion yields 0
-		client_condition           = 0
-		driver                     = plaintext
-		public_name                = PLAIN
-		server_advertise_condition = ${if eq{$tls_cipher}{}{false}{true}}
-		server_prompts             = :
-		server_set_id              = $auth2
-		server_condition           = "\
+		client_condition			= 0
+		driver						= plaintext
+		public_name					= PLAIN
+		server_advertise_condition	= ${if eq{$tls_cipher}{}{false}{true}}
+		server_prompts				= :
+		server_set_id				= $auth2
+		server_condition			= "\
 			${if and { \
-			    {!eq{$auth2}{}} \
-			    {!eq{$auth3}{}} \
-			    {crypteq {$auth3}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth2} password }}}} \
-			    {eq{0}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth2} submission_disabled}}}} \
+				{!eq{$auth2}{}} \
+				{!eq{$auth3}{}} \
+				{crypteq {$auth3}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth2} password }}}} \
+				{eq{0}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth2} submission_disabled}}}} \
 			}{yes}{no}}"
 	login_auth:
-		driver                     = plaintext
-		public_name                = LOGIN
-		server_advertise_condition = ${if eq{$tls_cipher}{}{false}{true}}
-		server_prompts             = Username:: : Password::
-		server_set_id              = $auth1
-		server_condition           = "\
+		driver						= plaintext
+		public_name					= LOGIN
+		server_advertise_condition	= ${if eq{$tls_cipher}{}{false}{true}}
+		server_prompts				= Username:: : Password::
+		server_set_id				= $auth1
+		server_condition			= "\
 			${if and { \
-			    {!eq{$auth1}{}} \
-			    {!eq{$auth2}{}} \
-			    {crypteq {$auth3}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} password }}}} \
-			    {eq{0}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} submission_disabled}}}} \
+				{!eq{$auth1}{}} \
+				{!eq{$auth2}{}} \
+				{crypteq {$auth3}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} password }}}} \
+					{eq{0}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} submission_disabled}}}} \
 			}{yes}{no}}"
 
