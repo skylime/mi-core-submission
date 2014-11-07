@@ -9,6 +9,9 @@ MAILSTORE = /tmp
 ACCOUNTPREFIX = mail.account:obj:
 ALIASPREFIX   = mail.alias:obj:
 
+# Scan Mails for Spam at ACL-time - otherwise set to 1
+DISABLEACLCHECK = 0
+
 .include LOCALCONF
 
 # set primary hostname from macro
@@ -24,7 +27,7 @@ redis_servers = 127.0.0.1//
 #>> AV Scanner - we use ClamAV at localhost port 3310
 av_scanner = clamd:127.0.0.1 3310
 
-#>> SmapScanner - we use rspamd in a spamassassins mannor
+#>> SmapScanner - we use spamassassin
 spamd_address = 127.0.0.1 11333
 
 #>> submission from a local MUA or script 
@@ -44,14 +47,14 @@ acl_smtp_helo = acl_check_helo
 acl_smtp_rcpt = acl_check_rcpt
 acl_smtp_data = acl_check_data
 
-never_users                = root
-host_lookup                = *
-rfc1413_hosts              = *
-rfc1413_query_timeout      = 5s
-ignore_bounce_errors_after = 2d
-timeout_frozen_after       = 7d
-queue_only_load            = 8
-message_size_limit         = 100M
+never_users					= root
+host_lookup					= *
+rfc1413_hosts				= *
+rfc1413_query_timeout		= 5s
+ignore_bounce_errors_after	= 2d
+timeout_frozen_after		= 7d
+queue_only_load				= 8
+message_size_limit			= 100M
 
 daemon_smtp_ports    = 25 : 465 : 587
 tls_on_connect_ports = 465 : 587
@@ -125,26 +128,28 @@ begin acl
 			      }} \
 			    }}{} }
 		#>> skip spam scanning for large msg (larger than 1M)
+# DEBUG HACK
 		accept
-			condition       = ${if >{$message_size}{1M}}
+            #>> if manually set to disable check at acl-time or if message is larger than 1MB
+			condition       = ${if or { {eq{DISABLEACLCHECK}{1}} {>{$message_size}{1M}}}}
 			log_message     = Spam scan skipped; message too large ($message_size)
-			add_header      = X-Spam-Report: Spam scan skipped; message too large
-			set acl_m_large = yes
+#			add_header      = X-Spam-Report: Spam scan skipped; message too large
+			set acl_m_noscan = yes
 		#>> put headers in all messages (no matter if spam or not)
 		warn
-			spam       = nobody:true
+			spam       = nobody:true/defer_ok
 			add_header = X-Spam-Score: $spam_score
 			add_header = X-Spam-Level: $spam_bar
 		#>> put Spam Flag in messages with score > 5
 		warn
-			spam       = nobody:true
+			spam       = nobody:true/defer_ok
 			condition  = ${if >{$spam_score_int}{50}{true}{false}}
 			add_header = X-Spam-Flag: YES
 			add_header = X-Spam-Report: $spam_report
 		#>> reject spam at high scores (> 12)
 		deny
 			message   = This message scored $spam_score spam points.
-			spam      = nobody:true
+			spam      = nobody:true/defer_ok
 			condition = ${if >{$spam_score_int}{120}{true}{false}}
 		accept
 
@@ -163,6 +168,25 @@ begin routers
                                    } }
                 data            = ADMIN_CONTACT
                 redirect_router = lookuphost
+
+        #>> possible to scan mails at routing-time rather than at acl-time
+        spamcheck:
+                driver                  = accept
+                no_verify
+                #>> if not scanned at ACL-Time
+                condition               = ${if eq {$acl_m_noscan}{yes}}
+                #>> and if not received from local spam scan engine
+                condition               = ${if !eq {$received_protocol}{spam-scanned}}
+                transport               = spamcheck
+
+        #>> mails scanned at routing-time can't be bounced at acl-time - so:
+        spambounce:
+                driver                  = accept
+                condition               = ${if eq {$received_protocol}{spam-scanned}}
+                condition               = ${if and {{def:h_X-Spam-Flag:}{eq {$h_X-Spam-Flag:}{YES}}}}
+                condition               = ${if def:h_X-Spam-Score:}
+				condition				= ${if >{${substr{-2}{$h_X-Spam-Score:}}${substr{-1}{1}{$h_X-Spam-Score:}}}{120}}
+                transport               = man_bounce
 
 	#>> dnslookup - for all mails to all recipients
 	lookuphost:
@@ -183,6 +207,26 @@ begin transports
 		dkim_private_key = DEFAULT_DOMAINKEY
 		dkim_canon       = relaxed
 
+        #>> checking spam at routing time
+        spamcheck:
+                debug_print             = "T: spamassassin_pipe for $local_part@$domain"
+                driver                  = pipe
+                use_bsmtp               = true
+                transport_filter        = /opt/local/bin/spamc -F /opt/local/etc/spamassassin/spamc.conf
+                command                 = /opt/local/sbin/exim -C /opt/local/etc/exim/configure -oMr spam-scanned -bS -d+all -v
+                home_directory          = "/tmp"
+                current_directory       = "/tmp"
+                message_prefix          =
+                message_suffix          =
+				max_output		=	500k
+				return_output	=	true
+
+        #>> bouncing mail because of Spam
+        man_bounce:
+                driver                  = autoreply
+				to						= $return_path
+                text                    = "We are very sorry, but the message you sent was declared as highrated Spam! \
+                                           If you think this is an error, please contact your provider. We apologise for any inconvenience."
 
 #>>
 #>> retry
