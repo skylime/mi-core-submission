@@ -1,5 +1,14 @@
 # Changelog
 
+## 14.2.11
+
+### Other
+
+* Spamassassin displays additional header for use in exims spam check routing.
+  [Boris Poblotzki]
+* pimped script and bounce message. [Boris Poblotzki]
+* Spam handling with router scanning fallback. [Boris Poblotzki]
+
 ## 14.2.10
 
 ### New
