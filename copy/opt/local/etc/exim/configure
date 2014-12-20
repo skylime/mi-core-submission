@@ -266,7 +266,7 @@ begin authenticators
 			${if and { \
 				{!eq{$auth1}{}} \
 				{!eq{$auth2}{}} \
-				{crypteq {$auth3}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} password }}}} \
+				{crypteq {$auth2}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} password }}}} \
 					{eq{0}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} submission_disabled}}}} \
 			}{yes}{no}}"
 
