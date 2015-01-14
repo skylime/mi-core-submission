@@ -1,5 +1,45 @@
 # Changelog
 
+## 14.2.12
+
+### New
+
+* Merge all changes from extra/dovecot-proxy. [Thomas Merkel]
+* update to new core-base image cd298780-4d55-11e4-addf-63835732c9d9. [Thomas Merkel]
+* new mdata var for proxy_host. [Thomas Merkel]
+* cleanup and create ssl folder for dovecot. [Thomas Merkel]
+* add dovecot minimal proxy config. [Thomas Merkel]
+* add dovecot packages. [Thomas Merkel]
+* version update of exim which include a patch for the proxy protocol. [Thomas Merkel]
+
+### Changes
+
+* update desc and name. [Thomas Merkel]
+* update readme with new variables. [Thomas Merkel]
+* rename to `proxy_mbox_` variable. [Thomas Merkel]
+* modify motd. [Thomas Merkel]
+
+### Fix
+
+* issue with .ext file reference from dovecot.conf. [Thomas Merkel]
+* dovecot should be enable by default. [Thomas Merkel]
+
+### Other
+
+* only start dovecot if mdata variables are used. [Thomas Merkel]
+* require valid ssl certificates. [Thomas Merkel]
+* only if mdata exists. [Thomas Merkel]
+* fix permissions for script files. [Thomas Merkel]
+* Merge dovecot proxy with master to provide only one image. [Thomas Merkel]
+* Merge branch 'master' into extra/dovecot-proxy. [Thomas Merkel]
+* fix LOGIN authenticator (used for example by outlook) by using the correct variable to compare against the password hash. [Sebastian Wiedenroth]
+* fix external file for dovecot with information. [Thomas Merkel]
+* Merge branch 'master' into extra/dovecot-proxy. [Thomas Merkel]
+* update to new version. [Thomas Merkel]
+* Merge branch 'master' into extra/dovecot-proxy. [Thomas Merkel]
+* we are a gmbh now. [Thomas Merkel]
+* dont use a special port because we also like to support pop. [Thomas Merkel]
+
 ## 14.2.11
 
 ### Other
