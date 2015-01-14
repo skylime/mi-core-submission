@@ -26,6 +26,7 @@
 
 ### Other
 
+* make everything a little bit more secure to verify via ca file. [Thomas Merkel]
 * only start dovecot if mdata variables are used. [Thomas Merkel]
 * require valid ssl certificates. [Thomas Merkel]
 * only if mdata exists. [Thomas Merkel]
