@@ -1,5 +1,13 @@
 # Changelog
 
+## 14.2.13
+
+### Other
+
+* version bump. [Thomas Merkel]
+* support also starttls for proxy. [Thomas Merkel]
+* allow also starttls connections. [Thomas Merkel]
+
 ## 14.2.12
 
 ### New
