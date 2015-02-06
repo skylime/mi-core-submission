@@ -75,6 +75,9 @@ rm /opt/local/etc/dovecot/dovecot-example.conf
 echo "* Create ssl folder"
 mkdir -p /opt/local/etc/dovecot/ssl
 
+echo "* Create log folder for dovecot"
+mkdir -p /var/log/dovecot
+
 # Activate munin plugins
 echo "* Activate munin plugins"
 for plugin in "${MUNIN_PLUGINS[@]}"; do
