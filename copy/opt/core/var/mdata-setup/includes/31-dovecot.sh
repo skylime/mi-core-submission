@@ -9,7 +9,7 @@ if mdata-get proxy_mbox_ssl  1>/dev/null 2>&1 && \
 	chmod 400 /opt/local/etc/dovecot/ssl/dovecot.pem
 
 	cat > /opt/local/etc/dovecot/conf.d/core-proxy.conf.ext <<EOF
-proxy=y host=$(mdata-get proxy_mbox_host) ssl=yes starttls=yes nopassword=y
+proxy=y host=$(mdata-get proxy_mbox_host) ssl=yes nopassword=y
 EOF
 
 fi
