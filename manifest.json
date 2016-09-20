@@ -1,0 +1,24 @@
+{
+	"name":         "core-submission",
+	"version":      "16.2.0",
+	"description":  "core.io Submission Server and optional Dovecot Proxy",
+	"organization": "SkyLime",
+	"brand":        "Instance",
+	"homepage":     "https://github.com/skylime/mi-core-submission",
+	"base":         "94deaf71-9b8f-42db-8e98-6f98ec82b676",
+	"minram":       1024,
+	"customer_metadata": {
+		"root_authorized_keys": {"type": "text", "description": "SSH public key(s) for the root user"},
+		"syslog_host":          {"type": "text", "description": "syslog server IP address and port seperated by colon"},
+		"mail_smarthost":       {"type": "text", "description": "hostname of remote smtp server"},
+		"mail_auth_user":       {"type": "text", "description": "smtp username if authentication is required"},
+		"mail_auth_pass":       {"type": "text", "description": "smtp password"},
+		"mail_adminaddr":       {"type": "text", "description": "admin email address alias for all mails to root@localhost"},
+		"api_redis_addr":       {"type": "text", "description": "ip or hostname of api server, ip addresses requires squared brackets"},
+		"api_redis_key":        {"type": "text", "description": "base64 encoded spipe key for api server"},
+		"submission_ssl":       {"type": "text", "description": "ssl cert, key and CA for smtp in pem format"},
+		"dkim_private_key":     {"type": "text", "description": "Default Domainkey for DKIM"},
+		"proxy_mbox_ssl":       {"type": "text", "description": "ssl certificate for proxy to imap/pop server"},
+		"proxy_mbox_host":      {"type": "text", "description": "hostname of real imap/pop server (only ssl is supported)"}
+	}
+}

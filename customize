@@ -5,21 +5,16 @@
 PATH=/opt/local/gnu/bin:/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin
 
 # Munin plugins
-MUNIN_PLUGIN_SRC='/opt/local/lib/munin/plugins'
-MUNIN_PLUGIN_DST='/opt/local/etc/munin/plugins'
-MUNIN_PLUGINS=(
-	'clamav'
-	'exim_mailqueue'
-	'exim_mailstats'
-	'spamassassin'
-	'redis_replication_status'
-)
+MUNIN_PLUGINS="
+	clamav
+	exim_mailqueue
+	exim_mailstats
+	spamassassin
+	redis_replication_status
+"
 
 # Exit if any commands fail
 set -o errexit
-
-echo "* Install spiped"
-pkg_add http://pkgsrc.smartos.skylime.net/skylime-extra/2014Q2/x86_64/spiped-1.3.1nb3.tgz
 
 echo "* Create clamav logging directory"
 mkdir -p /var/log/clamav
@@ -40,30 +35,13 @@ mkdir /var/spamassassin/.spamassassin
 chown -R spamd:spamd /var/spamassassin
 chown -R spamd:spamd /opt/local/etc/spamassassin
 
-# Import spamd manifest
-echo "* Import spamd manifest"
-svccfg import /tmp/spamd.xml
-rm /tmp/spamd.xml
-
 # Update spamd and clamd
 echo "* Update spamd and clamd database"
 /opt/local/bin/freshclam
 pyzor --homedir /opt/local/etc/spamassassin discover
 
-# Configuring image specific packages
-echo "* Configuring image specific packages.";
-# Exim
-pkg_add http://pkgsrc.smartos.skylime.net/skylime-extra/2014Q2/x86_64/exim-4.84nb1.tgz
-
-# update to backported dovecot
-pkg_add -u http://pkgsrc.smartos.skylime.net/skylime-extra/2014Q2/x86_64/dovecot-2.2.15nb1.tgz
-pkg_add -u http://pkgsrc.smartos.skylime.net/skylime-extra/2014Q2/x86_64/dovecot-pigeonhole-0.4.6nb1.tgz
-
-
-# Create symlink for exim (mailq,sendmail,mail)
-echo "* Create symlink for exim (mailq,sendmail)"
-ln -sf ../../../opt/local/sbin/exim /opt/local/bin/mailq
-ln -sf ../../../opt/local/sbin/exim /opt/local/sbin/sendmail
+echo "* Copy mailer.conf to /etc/ because of exim usage"
+cp /opt/local/share/examples/exim/mailer.conf /etc/
 
 # Install rblwatch script
 echo "* Install rblwatch script"
@@ -83,21 +61,8 @@ mkdir -p /opt/local/etc/dovecot/ssl
 echo "* Create log folder for dovecot"
 mkdir -p /var/log/dovecot
 
-# Activate munin plugins
 echo "* Activate munin plugins"
-for plugin in "${MUNIN_PLUGINS[@]}"; do
-	if [ ! -x ${MUNIN_PLUGIN_SRC}/${plugin} ]; then
-		plugin_src=${plugin%_*}_
-		[ ! -x ${MUNIN_PLUGIN_SRC}/${plugin_src} ] && \
-			plugin_src=${plugin_src%%_*}_
-	else
-		plugin_src=${plugin}
-	fi
-	if [[ -x ${MUNIN_PLUGIN_SRC}/${plugin_src} ]]; then
-		echo "  ${plugin}"
-		ln -sf ${MUNIN_PLUGIN_SRC}/${plugin_src} ${MUNIN_PLUGIN_DST}/${plugin}
-	fi
-done
+/opt/core/bin/munin-node-plugins ${MUNIN_PLUGINS}
 
 # Clean up
 echo "* Cleaning up."

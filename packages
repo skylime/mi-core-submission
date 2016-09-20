@@ -8,3 +8,5 @@ py27-pip
 dovecot
 dovecot-pigeonhole
 py27-gdbm
+spiped
+exim
