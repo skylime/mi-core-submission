@@ -1,5 +1,29 @@
 # Changelog
 
+## 16.2.0
+
+### New
+
+* Version update to 16.2.2 with newest dovecot, exim, etc. [Thomas Merkel]
+
+  Switching to the newest pkgsrc stable version 16Q2 release. Provide newest packages for exim, dovecot, spipe and more. Also switching to the new core-base configuration options.
+
+* Added config for URIBL. [Boris Poblotzki]
+* SPF check for spamassassin in init.pre activated. [Boris Poblotzki]
+
+### Fix
+
+* Fix logging for dovecot. [Thomas Merkel]
+* Config log path and logadm for dovecot. [Thomas Merkel]
+* Enable munin plugin only if dovecot proxy is used. [Thomas Merkel]
+
+### Other
+
+* License update. [Thomas Merkel]
+* Spamd plugins configrured. [Boris Poblotzki]
+* Same log location as in mbox server. [Thomas Merkel]
+* Ssl and starttls didnt work both. [Thomas Merkel]
+
 ## 14.2.13
 
 ### Other
