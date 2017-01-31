@@ -98,7 +98,7 @@ begin acl
 			authenticated	= *
 		#>> Default deny relay
 		deny
-		  message = relay not permitted - access prohibited
+			message = relay not permitted - access prohibited
 
 	acl_check_data:
 		#>> local generated
@@ -108,7 +108,6 @@ begin acl
 		deny
 			message			= This message contains malware ($malware_name)
 			condition		= ${if < {$message_size}{25M}}
-			demime			= *
 			malware			= *
 		#>> dont allow spoofing
 		deny
