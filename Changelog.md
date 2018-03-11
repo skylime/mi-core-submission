@@ -1,5 +1,25 @@
 # Changelog
 
+## 17.4.0
+
+### New
+- Add base64 because its required by spipe config scripts. [Thomas
+  Merkel]
+- Exim update. [Thomas Merkel]
+- Version bump to core-base 17Q4 release. [Thomas Merkel]
+- Support Let's Encrypt if no SSL certificates are provided. [Thomas
+  Merkel]
+
+### Fix
+
+- Remove gitignore and cleanup some permissions because the files are
+  sourced. [Thomas Merkel]
+- Disable chunking by default because of an existing exim bug. [Thomas
+  Merkel]
+
+  https://git.exim.org/exim.git/blobdiff/544dd905b208164eaae771ab6d2a198b4c67aa0c..7dc5f827a629b06afcba5a1a52184084c5214c98:/src/README.UPDATING
+  https://git.exim.org/exim.git/blob/7dc5f827a629b06afcba5a1a52184084c5214c98:/src/util/chunking_fixqueue_finalnewlines.pl
+
 ## 16.4.0
 
 ### New
