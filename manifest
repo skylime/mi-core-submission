@@ -5,4 +5,4 @@ version="17.4.0"
 description="core.io Submission Server and optional Dovecot Proxy"
 homepage="https://github.com/skylime/mi-core-submission"
 users="root admin"
-base="cc4c5e60-6104-4b4a-8e0d-4c4213984468",
+base="cc4c5e60-6104-4b4a-8e0d-4c4213984468"
