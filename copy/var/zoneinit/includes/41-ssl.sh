@@ -6,7 +6,7 @@ ssl() {
 	local ssl_home=${1}
 	local mdata_var=${2}
 	local filename=${3}
-	local service=${4-${filename}}
+	local service=${4}
 
 	mkdir -p "${ssl_home}"
 
@@ -34,7 +34,8 @@ ssl() {
 			grep -q '^#!/usr/bin/env bash' || echo '#!/usr/bin/env bash' > ${le_home}renew-hook.sh
 			echo "cat ${le_live}fullchain.pem > ${ssl_home}/${filename}.crt" >> ${le_home}renew-hook.sh
 			echo "cat ${le_live}privkey.pem   > ${ssl_home}/${filename}.key" >> ${le_home}renew-hook.sh
-			echo "svcadm restart ${service}" >> ${le_home}renew-hook.sh
+			[[ ! -z ${service} ]] && \
+				echo "svcadm restart ${service}" >> ${le_home}renew-hook.sh
 		else
 			# Fallback to selfsigned ssl certificates
 			/opt/core/bin/ssl-selfsigned.sh -d ${ssl_home} -f ${filename}
@@ -43,8 +44,8 @@ ssl() {
 }
 
 # Request and manage SSL certificates
-ssl /opt/local/etc/exim/ssl submission_ssl exim
-ssl /opt/local/etc/dovecot/ssl proxy_mbox_ssl dovecot
+ssl /opt/local/etc/exim/ssl submission_ssl exim svc:/pkgsrc/exim:default
+ssl /opt/local/etc/dovecot/ssl proxy_mbox_ssl dovecot svc:/pkgsrc/dovecot:default
 
 # Fix permissions
 chgrp mail /opt/local/etc/exim/ssl/exim.*
