@@ -6,6 +6,7 @@ ssl() {
 	local ssl_home=${1}
 	local mdata_var=${2}
 	local filename=${3}
+	local service=${4-${filename}}
 
 	mkdir -p "${ssl_home}"
 
@@ -33,6 +34,7 @@ ssl() {
 			grep -q '^#!/usr/bin/env bash' || echo '#!/usr/bin/env bash' > ${le_home}renew-hook.sh
 			echo "cat ${le_live}fullchain.pem > ${ssl_home}/${filename}.crt" >> ${le_home}renew-hook.sh
 			echo "cat ${le_live}privkey.pem   > ${ssl_home}/${filename}.key" >> ${le_home}renew-hook.sh
+			echo "svcadm restart ${service}" >> ${le_home}renew-hook.sh
 		else
 			# Fallback to selfsigned ssl certificates
 			/opt/core/bin/ssl-selfsigned.sh -d ${ssl_home} -f ${filename}
