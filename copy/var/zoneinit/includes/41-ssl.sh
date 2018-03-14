@@ -4,7 +4,7 @@
 
 # Request and manage SSL certificates
 /opt/core/bin/ssl-generator.sh /opt/local/etc/exim/ssl submission_ssl exim svc:/pkgsrc/exim:default
-/opt/core/bin/ssl-generator.sh /opt/local/etc/exim/ssl proxy_mbox_ssl dovecot svc:/pkgsrc/dovecot:default
+/opt/core/bin/ssl-generator.sh /opt/local/etc/dovecot/ssl proxy_mbox_ssl dovecot svc:/pkgsrc/dovecot:default
 
 # Fix permissions
 chgrp mail /opt/local/etc/exim/ssl/exim.*

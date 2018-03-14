@@ -1,7 +1,7 @@
 name="core-submission"
 organization="SkyLime"
 brand="Instance"
-version="17.4.1"
+version="17.4.2"
 description="core.io Submission Server and optional Dovecot Proxy"
 homepage="https://github.com/skylime/mi-core-submission"
 users="root admin"
