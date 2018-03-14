@@ -1,5 +1,11 @@
 # Changelog
 
+## 17.4.2
+
+### Fix
+
+- Fix typo in ssl generator script. [Thomas Merkel]
+
 ## 17.4.1
 
 ### Fix
