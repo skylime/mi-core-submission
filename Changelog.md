@@ -1,5 +1,13 @@
 # Changelog
 
+## 17.4.1
+
+### Fix
+
+- Exim-cron script should not fail if db folder doesn't exists. [Thomas
+  Merkel]
+- Fix script to support non gnu-find. [Thomas Merkel]
+
 ## 17.4.0
 
 ### New
