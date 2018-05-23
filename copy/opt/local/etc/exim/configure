@@ -71,7 +71,7 @@ tls_privatekey				= /opt/local/etc/exim/ssl/exim.key
 
 #>> Logging
 #>> Syslog and extra exim log files
-log_file_path				= :syslog
+log_file_path				= /var/log/exim/%s
 syslog_duplication			= false
 
 
