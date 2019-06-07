@@ -1,5 +1,26 @@
 # Changelog
 
+## 18.4.0
+
+### New
+
+* Version bump to latest core-base. [Thomas Merkel]
+* Exim version bump. [Thomas Merkel]
+* Run sa-update as postinit command. [Thomas Merkel]
+* Switch to default spamd port 11333. [Thomas Merkel]
+
+### Fix
+
+* Fix default group for dovecot logadm. [Thomas Merkel]
+* Raise vsz_limit for imap-login. [Sebastian Wiedenroth]
+
+### Other
+
+* License update. [Thomas Merkel]
+* Moved exim configuration from mdata-setup to zoneinit. [Thomas Merkel]
+* Move spiped and dovecot config from mdata-setup to zoneinit. [Thomas Merkel]
+* Switch from syslog usage to extra files per service and enable logadm for all logs. [Thomas Merkel]
+
 ## 17.4.3
 
 ### Fix
