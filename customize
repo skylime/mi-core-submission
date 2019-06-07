@@ -55,9 +55,9 @@ pip install rblwatch
 # Remove all examples dovecot configuration
 echo "* Remove all examples dovecot configuration"
 shopt -s extglob
-rm /opt/local/etc/dovecot/conf.d/!(core-*)
-rm /opt/local/etc/dovecot/*.ext
-rm /opt/local/etc/dovecot/dovecot-example.conf
+rm -f /opt/local/etc/dovecot/conf.d/!(core-*)
+rm -f /opt/local/etc/dovecot/*.ext
+rm -f /opt/local/etc/dovecot/dovecot-example.conf
 
 # Create ssl folder
 echo "* Create ssl folder"
