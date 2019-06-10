@@ -48,10 +48,6 @@ pyzor --homedir /opt/local/etc/spamassassin discover
 echo "* Copy mailer.conf to /etc/ because of exim usage"
 cp /opt/local/share/examples/exim/mailer.conf /etc/
 
-# Install rblwatch script
-echo "* Install rblwatch script"
-pip install rblwatch
-
 # Remove all examples dovecot configuration
 echo "* Remove all examples dovecot configuration"
 shopt -s extglob
