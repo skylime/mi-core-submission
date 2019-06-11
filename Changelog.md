@@ -1,5 +1,21 @@
 # Changelog
 
+## 18.4.2
+
+### New
+
+* Replace python rblwatch/rblcheck script with new shell implementation. [Thomas Merkel]
+* Generate DH key for Dovecot if it doesn't exists. [Thomas Merkel]
+  Run 31-dovecot-generate-dh.sh only on postinit and restart service after the file exists.
+  Provide doveadm-gen-dh.sh to easily generate a new key
+
+### Fix
+
+* Adjust log location for spamassassin munin plugin. [Sebastian Wiedenroth]
+* Remove workaround for chunking. [Thomas Merkel]
+* Fix sed typo. [Thomas Merkel]
+* Fix if exim db not exists yet. [Thomas Merkel]
+
 ## 18.4.1
 
 ### Fix
