@@ -9,7 +9,7 @@ if mdata-get proxy_mbox_host 1>/dev/null 2>&1; then
 	if mdata-get submission_dh 1>/dev/null 2>&1; then
 		mdata-get submission_dh > /opt/local/etc/dovecot/ssl/dh.pem
 
-		gsed -i 's|^#ssl_dh|ssl_dh =</opt/local/etc/dovecot/ssl/dh.pem|g' \
+		gsed -i 's|^#ssl_dh.*|ssl_dh =</opt/local/etc/dovecot/ssl/dh.pem|g' \
 			/opt/local/etc/dovecot/dovecot.conf
 	fi
 
