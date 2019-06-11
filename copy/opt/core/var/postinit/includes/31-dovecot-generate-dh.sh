@@ -9,7 +9,7 @@ if ! openssl dhparam -inform PEM -in ${dovecot_dh_file} -check -noout >/dev/null
 	/opt/core/bin/doveadm-gen-dh.sh
 
 	# Updating configuration file for dovecot
-	gsed -i 's|^#ssl_dh|ssl_dh =</opt/local/etc/dovecot/ssl/dh.pem|g' \
+	gsed -i 's|^#ssl_dh.*|ssl_dh =</opt/local/etc/dovecot/ssl/dh.pem|g' \
 		/opt/local/etc/dovecot/dovecot.conf
 
 	# Restart devecot service to reload DH file
