@@ -5,8 +5,8 @@ pyzor
 p5-DB_File
 redis
 py27-pip
-dovecot
-dovecot-pigeonhole
+https://pkgsrc.smartos.skylime.net/skylime-extra/2018Q4/x86_64/dovecot-2.3.7.2.tgz
+https://pkgsrc.smartos.skylime.net/skylime-extra/2018Q4/x86_64/dovecot-pigeonhole-0.5.7.2.tgz
 py27-gdbm
 spiped
 https://pkgsrc.smartos.skylime.net/skylime-extra/2018Q4/x86_64/exim-4.92.tgz

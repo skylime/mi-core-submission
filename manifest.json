@@ -1,11 +1,11 @@
 {
 	"name":         "core-submission",
-	"version":      "18.4.2",
+	"version":      "18.4.3",
 	"description":  "core.io Submission Server and optional Dovecot Proxy",
 	"organization": "SkyLime",
 	"brand":        "Instance",
 	"homepage":     "https://github.com/skylime/mi-core-submission",
-	"base":         "99df3def-9355-488f-840f-e7eb6a86c96b",
+	"base":         "208f9314-29cf-4bec-9d8b-c0697d00c929",
 	"minram":       1024,
 	"customer_metadata": {
 		"root_authorized_keys": {"type": "text", "description": "SSH public key(s) for the root user"},
