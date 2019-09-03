@@ -1,5 +1,14 @@
 # Changelog
 
+## 18.4.3
+
+### Fix
+
+* Update to latest Dovecot version, provide fix for vulnerability. [Thomas Merkel]
+  https://dovecot.org/pipermail/dovecot/2019-August/116873.html
+* Rblcheck.sh version bump, extra TXT info newline issue fix. [Thomas Merkel]
+* Download rblcheck.sh from remote with version information. [Thomas Merkel]
+
 ## 18.4.2
 
 ### New
