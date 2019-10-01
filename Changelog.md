@@ -5,6 +5,7 @@
 ### Fix
 
 * Exim update to 4.92.3 to fix CVE-2019-16928. [Thomas Merkel]
+* Dovecot raise vsz_limit. [Sebastian Wiedenroth]
 
 ## 18.4.4
 
