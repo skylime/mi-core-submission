@@ -1,6 +1,6 @@
 {
   "name": "core-submission",
-  "version": "20.1.0-233fbcf",
+  "version": "20.1.0",
   "description": "core.io Submission Server and optional Dovecot Proxy",
   "organization": "SkyLime",
   "brand": "Instance",
