@@ -12,6 +12,7 @@
 
 * Fix permissions for zoneinit scripts. [Thomas Merkel]
 * Fix manifest json issue with correct version. [Thomas Merkel]
+* Remove unused packages and packages provided in the base image [Thomas Merkel]
 
 ### Other
 
