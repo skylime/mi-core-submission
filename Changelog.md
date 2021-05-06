@@ -1,5 +1,22 @@
 # Changelog
 
+## 20.4.0
+
+### New
+
+* Use 2020Q4 core-base. [Thomas Merkel]
+* Update to latest rblcheck.sh version 1.3. [Thomas Merkel]
+* Use fixed exim version for 2020Q4. [Thomas Merkel]
+
+### Fix
+
+* Fix permissions for zoneinit scripts. [Thomas Merkel]
+* Fix manifest json issue with correct version. [Thomas Merkel]
+
+### Other
+
+* Update license information. [Thomas Merkel]
+
 ## 20.1.0
 
 ### New
