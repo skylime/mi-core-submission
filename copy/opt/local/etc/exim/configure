@@ -66,6 +66,23 @@ tls_advertise_hosts = *
 tls_certificate				= /opt/local/etc/exim/ssl/exim.crt
 tls_privatekey				= /opt/local/etc/exim/ssl/exim.key
 
+#>> Header
+#>> Overwrite default Received header to not provide IP information of
+#>> authenticated users. Keep the original header as default as possible.
+received_header_text = Received: \
+	${if def:authenticated_id {from $authenticated_id} \
+	    {${if def:sender_rcvhost {from $sender_rcvhost\n\t}}}}\
+	${if def:sender_helo_name {(helo=$sender_helo_name)\n\t}}\
+	by $primary_hostname \
+	${if def:received_protocol {with $received_protocol }}\
+	${if def:tls_in_ver        { ($tls_in_ver)}}\
+	${if def:tls_in_cipher_std { tls $tls_in_cipher_std\n\t}}\
+	(Exim $version_number)\n\t\
+	${if def:sender_address \
+	{(envelope-from <$sender_address>)\n\t}}\
+	id $message_exim_id\
+	${if def:received_for {\n\tfor $received_for}}
+
 #>> Logging
 #>> Syslog and extra exim log files
 log_file_path				= /var/log/exim/%s
