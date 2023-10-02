@@ -1,5 +1,25 @@
 # Changelog
 
+## 22.4.0 
+
+### New
+
+* Switch to 2022Q4 (core-base) [Thomas Merkel]
+
+  Using latest core-base image from 2022Q4 with pkgsrc LTS branch.
+
+* Switch to self-build exim version with required security fixes. [Thomas Merkel]
+
+### Fix
+
+* Quote redis lookups in exim configuration. [Thomas Merkel]
+* Overwrite received header to remove IP information. [Thomas Merkel]
+
+### Other
+
+* Update license to (c) 2023. [Thomas Merkel]
+* Remove perl DB_File. [Thomas Merkel]
+
 ## 20.4.0
 
 ### New
