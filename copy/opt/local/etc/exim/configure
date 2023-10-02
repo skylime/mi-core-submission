@@ -138,7 +138,7 @@ begin acl
 									{ !eqi{$authenticated_id} {${address:$header_From:}} } \
 								}}
 			condition		= \
-								${if eq {${filter{<, ${lookup redis {HGET ACCOUNTPREFIX$authenticated_id spoofing_whitelist}} } \
+								${if eq {${filter{<, ${lookup redis {HGET ${quote_redis:ACCOUNTPREFIX$authenticated_id} spoofing_whitelist}} } \
 									{or{ \
 										{eq{$item}{\*}} \
 										{eq{$item}{$sender_address}} \
@@ -272,8 +272,8 @@ begin authenticators
 			${if and { \
 				{!eq{$auth2}{}} \
 				{!eq{$auth3}{}} \
-				{crypteq {$auth3}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth2} password }}}} \
-				{eq{0}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth2} submission_disabled}}}} \
+				{crypteq {$auth3}{${lookup redis {HGET ${quote_redis:ACCOUNTPREFIX${lc:$auth2}} password }}}} \
+				{eq{0}{${lookup redis {HGET ${quote_redis:ACCOUNTPREFIX${lc:$auth2}} submission_disabled}}}} \
 			}{yes}{no}}"
 	login_auth:
 		driver						= plaintext
@@ -285,7 +285,7 @@ begin authenticators
 			${if and { \
 				{!eq{$auth1}{}} \
 				{!eq{$auth2}{}} \
-				{crypteq {$auth2}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} password }}}} \
-					{eq{0}{${lookup redis {HGET ACCOUNTPREFIX${lc:$auth1} submission_disabled}}}} \
+				{crypteq {$auth2}{${lookup redis {HGET ${quote_redis:ACCOUNTPREFIX${lc:$auth1}} password }}}} \
+					{eq{0}{${lookup redis {HGET ${quote_redis:ACCOUNTPREFIX${lc:$auth1}} submission_disabled}}}} \
 			}{yes}{no}}"
 
