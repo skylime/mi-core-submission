@@ -8,4 +8,5 @@
 
 # Fix permissions
 chgrp mail /opt/local/etc/exim/ssl/exim.*
+chmod g+r /opt/local/etc/exim/ssl/exim.*
 chgrp dovecot /opt/local/etc/dovecot/ssl/dovecot.*

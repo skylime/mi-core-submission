@@ -1,0 +1,439 @@
+# =============================================================================
+# PATHS
+# =============================================================================
+path.home: /opt/local
+path.config: /opt/local/etc/filebeat
+path.data: /var/db/filebeat
+path.logs: /var/log/filebeat
+
+# =============================================================================
+# INPUTS
+# =============================================================================
+filebeat.inputs:
+  # ---------------------------------------------------------------------------
+  # Exim — main log
+  # One line per event. Flags: <= (accepted) => (delivered) == (deferred) ** (bounced)
+  # ---------------------------------------------------------------------------
+  - type: filestream
+    id: exim-mainlog
+    enabled: true
+    paths:
+      - /var/log/exim/main
+    encoding: utf-8
+    fields:
+      service: exim
+      log_type: mainlog
+    fields_under_root: true
+    prospector.scanner:
+      check_interval: 5s
+      tail_files: false
+    close.on_state_change.inactive: 2m
+
+  # ---------------------------------------------------------------------------
+  # Exim — panic log
+  # Fatal errors, config problems, crashes. Low volume, single-line.
+  # ---------------------------------------------------------------------------
+  - type: filestream
+    id: exim-paniclog
+    enabled: true
+    paths:
+      - /var/log/exim/panic
+    encoding: utf-8
+    fields:
+      service: exim
+      log_type: paniclog
+    fields_under_root: true
+    prospector.scanner:
+      check_interval: 10s
+      tail_files: false
+    close.on_state_change.inactive: 5m
+
+  # ---------------------------------------------------------------------------
+  # Exim — reject log
+  # Messages rejected by ACL (spam policy, RBL hits, auth failures, etc.)
+  # ---------------------------------------------------------------------------
+  - type: filestream
+    id: exim-rejectlog
+    enabled: true
+    paths:
+      - /var/log/exim/reject
+    encoding: utf-8
+    fields:
+      service: exim
+      log_type: rejectlog
+    fields_under_root: true
+    prospector.scanner:
+      check_interval: 5s
+      tail_files: false
+    close.on_state_change.inactive: 2m
+
+  # ---------------------------------------------------------------------------
+  # rspamd
+  # Per-message spam scoring, symbol hits, actions. Single-line, key=value.
+  # ---------------------------------------------------------------------------
+  - type: filestream
+    id: rspamd
+    enabled: true
+    paths:
+      - /var/log/rspamd/rspamd.log
+    encoding: utf-8
+    fields:
+      service: rspamd
+      log_type: rspamd
+    fields_under_root: true
+    prospector.scanner:
+      check_interval: 5s
+      tail_files: false
+    close.on_state_change.inactive: 2m
+
+  # ---------------------------------------------------------------------------
+  # Dovecot — main log (log_path)
+  # With info_log_path and debug_log_path set, only Warning, Error, Fatal and
+  # Panic lines end up here. Single-line, default log_timestamp format:
+  #   Sep 24 10:00:01 imap-login: Error: ...
+  # ---------------------------------------------------------------------------
+  - type: filestream
+    id: dovecot-mainlog
+    enabled: true
+    paths:
+      - /var/log/dovecot/main
+    encoding: utf-8
+    fields:
+      service: dovecot
+      log_type: dovecot-mainlog
+    fields_under_root: true
+    prospector.scanner:
+      check_interval: 5s
+      tail_files: false
+    close.on_state_change.inactive: 5m
+
+  # ---------------------------------------------------------------------------
+  # Dovecot — info log (info_log_path)
+  # Logins, disconnects, proxy sessions. Login lines carry the
+  # login_log_format_elements key=value pairs:
+  #   Sep 24 10:00:01 imap-login: Info: Login: user=<u@example.com>
+  #     method=PLAIN rip=192.0.2.1 rport=51234 lip=198.51.100.1 lport=993
+  #     mpid=12345 TLS session=<AbCdEfGhIjKl>
+  # ---------------------------------------------------------------------------
+  - type: filestream
+    id: dovecot-infolog
+    enabled: true
+    paths:
+      - /var/log/dovecot/info
+    encoding: utf-8
+    fields:
+      service: dovecot
+      log_type: dovecot-infolog
+    fields_under_root: true
+    prospector.scanner:
+      check_interval: 5s
+      tail_files: false
+    close.on_state_change.inactive: 2m
+
+  # ---------------------------------------------------------------------------
+  # Dovecot — debug log (debug_log_path)
+  # Only written when auth_debug / mail_debug / verbose_ssl are enabled.
+  # ---------------------------------------------------------------------------
+  - type: filestream
+    id: dovecot-debuglog
+    enabled: true
+    paths:
+      - /var/log/dovecot/debug
+    encoding: utf-8
+    fields:
+      service: dovecot
+      log_type: dovecot-debuglog
+    fields_under_root: true
+    prospector.scanner:
+      check_interval: 10s
+      tail_files: false
+    close.on_state_change.inactive: 5m
+
+  # ---------------------------------------------------------------------------
+  # Auth log — illumos path is /var/log/authlog
+  # SSH logins, su, sudo, PAM events. Single-line syslog format.
+  # ---------------------------------------------------------------------------
+  - type: filestream
+    id: authlog
+    enabled: true
+    paths:
+      - /var/log/authlog
+    encoding: utf-8
+    fields:
+      service: system
+      log_type: authlog
+    fields_under_root: true
+    prospector.scanner:
+      check_interval: 10s
+      tail_files: false
+    close.on_state_change.inactive: 5m
+
+  # ---------------------------------------------------------------------------
+  # SMF service logs — /var/svc/log/
+  # ---------------------------------------------------------------------------
+  - type: filestream
+    id: smf-logs
+    enabled: true
+    paths:
+      - /var/svc/log/*.log
+    encoding: utf-8
+    fields:
+      service: smf
+      log_type: smf
+    fields_under_root: true
+    prospector.scanner:
+      check_interval: 15s
+      tail_files: false
+    close.on_state_change.inactive: 10m
+
+    parsers:
+      - multiline:
+          type: pattern
+          # SMF bracket lines: "[ " + 3-letter month abbreviation
+          # e.g. "[ Jun  7 10:00:01 Executing start method (...). ]"
+          pattern: '^\[ [A-Z][a-z]{2} '
+          # negate: true  → lines that do NOT match the pattern are continuations
+          negate: true
+          # match: after  → bracket line starts the event; free-form output follows
+          match: after
+          # Safety caps
+          max_lines: 50
+          timeout: 10s
+
+# =============================================================================
+# PROCESSORS
+# =============================================================================
+processors:
+  # ---------------------------------------------------------------------------
+  # 1. Set host identity fields explicitly.
+  # ---------------------------------------------------------------------------
+  - add_fields:
+      target: host
+      fields:
+        name: "${HOSTNAME}"
+
+  # ---------------------------------------------------------------------------
+  # 2. Extract exim.flag for Exim mainlog and rejectlog lines only.
+  #
+  #    Exim line format:
+  #      2024-01-15 10:00:01 1rXkPq-0003aB-4F <= sender@example.com H=...
+  #      ^date       ^time   ^queue_id         ^flag
+  #
+  #    FLAG values (exhaustive, only 4):
+  #      <=   message arrived
+  #      =>   delivery completed
+  #      **   delivery failed / bounce
+  #      ==   delivery deferred
+  #
+  #    4 values → safe as a VictoriaLogs stream field, enabling Grafana
+  #    filter dropdowns and stream-scoped queries like:
+  #      {service="exim", exim.flag="**"} _time:1h
+  # ---------------------------------------------------------------------------
+  - dissect:
+      tokenizer: "%{} %{} %{} %{exim.flag} %{}"
+      field: "message"
+      # Empty string puts extracted fields directly at root level.
+      # Without this, newer Filebeat versions prefix everything with "dissect."
+      target_prefix: ""
+      ignore_failure: true
+      when:
+        or:
+          - equals:
+              log_type: "mainlog"
+          - equals:
+              log_type: "rejectlog"
+
+  # If dissect matched but the flag field contains anything other than the
+  # four valid Exim flags (e.g. a normal log line that doesn't follow the
+  # expected format), drop the garbage value so it doesn't pollute the stream.
+  - drop_fields:
+      fields: ["exim.flag"]
+      when:
+        not:
+          regexp:
+            exim.flag: '^(<=|=>|\*\*|==)$'
+
+  # Map exim.flag symbol to a human-readable exim.flag_name.
+  - script:
+      lang: javascript
+      id: exim_flag_name
+      source: >
+        function process(event) {
+          var flag = event.Get("exim.flag");
+          if (flag === null) { return; }
+          var names = {
+            "<=": "received",
+            "=>": "delivered",
+            "**": "bounced",
+            "==": "deferred"
+          };
+          var name = names[flag];
+          if (name) {
+            event.Put("exim.flag_name", name);
+          }
+        }
+      when:
+        has_fields: ["exim.flag"]
+
+  # ---------------------------------------------------------------------------
+  # 3. Derive smf.service from the log file path for SMF logs.
+  # ---------------------------------------------------------------------------
+  - dissect:
+      tokenizer: "/var/svc/log/%{smf.service}.log"
+      field: "log.file.path"
+      ignore_failure: true
+      when:
+        equals:
+          log_type: "smf"
+
+  # ---------------------------------------------------------------------------
+  # 4. Parse Dovecot log lines.
+  #
+  #    Line format (default log_timestamp "%b %d %H:%M:%S "):
+  #      <timestamp> <process>[(<user|pid>)][<<pid>>][<<session>>]: <Level>: <text>
+  #    e.g.
+  #      Sep 24 10:00:01 imap-login: Info: Login: user=<...> method=PLAIN ...
+  #      Sep 24 10:00:02 imap(u@example.com)<12345><AbCdEfGhIjKl>: Info: ...
+  #      Sep 24 10:00:03 auth-worker(4711): Error: ...
+  #
+  #    Low-cardinality stream fields:
+  #      dovecot.process  imap-login, pop3-login, managesieve-login, imap,
+  #                       pop3, auth, auth-worker, master, ...
+  #      dovecot.level    Debug, Info, Warning, Error, Fatal, Panic
+  #
+  #    Regular fields (from login_log_format_elements):
+  #      dovecot.user, dovecot.method, dovecot.rip, dovecot.rport,
+  #      dovecot.lip, dovecot.lport, dovecot.mpid, dovecot.tls,
+  #      dovecot.session, dovecot.pid, dovecot.event
+  #
+  #    Query examples:
+  #      {service="dovecot", dovecot.level="Error"} _time:1h
+  #      {service="dovecot", dovecot.process="imap-login"} "auth failed"
+  # ---------------------------------------------------------------------------
+  - script:
+      lang: javascript
+      id: dovecot_parse
+      source: |
+        var lineRe = /^[A-Z][a-z]{2} [ \d]\d \d{2}:\d{2}:\d{2} ([\w.-]+)(?:\(([^)]*)\))?(?:<(\d+)>)?(?:<([^>]*)>)?: (Debug|Info|Warning|Error|Fatal|Panic): (.*)$/;
+        var kv = {
+          "dovecot.user":    /(?:^|\s)user=<([^>]*)>/,
+          "dovecot.method":  /(?:^|\s)method=(\S+)/,
+          "dovecot.rip":     /(?:^|\s)rip=(\S+)/,
+          "dovecot.rport":   /(?:^|\s)rport=(\d+)/,
+          "dovecot.lip":     /(?:^|\s)lip=(\S+)/,
+          "dovecot.lport":   /(?:^|\s)lport=(\d+)/,
+          "dovecot.mpid":    /(?:^|\s)mpid=(\d+)/,
+          "dovecot.session": /(?:^|\s)session=<([^>]*)>/
+        };
+        function process(event) {
+          var msg = event.Get("message");
+          if (msg === null) { return; }
+          var m = lineRe.exec(msg);
+          if (m === null) { return; }
+
+          event.Put("dovecot.process", m[1]);
+          event.Put("dovecot.level", m[5]);
+
+          // "(...)" after the process name is either a pid (auth-worker)
+          // or the user (imap, pop3, lmtp, doveadm, proxy).
+          if (m[2]) {
+            if (/^\d+$/.test(m[2])) {
+              event.Put("dovecot.pid", m[2]);
+            } else {
+              event.Put("dovecot.user", m[2]);
+            }
+          }
+          if (m[3]) { event.Put("dovecot.pid", m[3]); }
+          if (m[4]) { event.Put("dovecot.session", m[4]); }
+
+          var text = m[6];
+
+          // Short event name without variable details, e.g. "Login",
+          // "Disconnected", "Aborted login", "proxy".
+          var ev = text.split(/[:(]/)[0].trim();
+          if (ev.length > 0 && ev.length <= 64) {
+            event.Put("dovecot.event", ev);
+          }
+
+          // login_log_format_elements — empty elements are omitted by
+          // dovecot, so every key is matched independently.
+          if (text.indexOf("rip=") === -1 && text.indexOf("user=<") === -1) {
+            return;
+          }
+          for (var key in kv) {
+            var r = kv[key].exec(text);
+            if (r !== null) { event.Put(key, r[1]); }
+          }
+          // %c — "secured", "TLS", "TLS handshaking" or "TLS: <error>"
+          var c = /(?:^|\s)(secured|TLS(?: handshaking)?(?:: [^=]*?)?)(?:\s+session=<|$)/.exec(text);
+          if (c !== null) { event.Put("dovecot.tls", c[1]); }
+        }
+      when:
+        equals:
+          service: "dovecot"
+
+  # ---------------------------------------------------------------------------
+  # 5. Drop fields that waste storage and carry no query value.
+  # ---------------------------------------------------------------------------
+  - drop_fields:
+      fields:
+        - "log.offset"
+        - "event.original"
+        - "ecs.version"
+        - "agent.ephemeral_id"
+        - "agent.id"
+        - "agent.version"
+        - "input.type"
+
+# =============================================================================
+# OUTPUT → VictoriaLogs
+# =============================================================================
+output.elasticsearch:
+  hosts: ["https://${LOGSERVER_HOST}:443/insert/elasticsearch/"]
+  headers:
+    Authorization: "Bearer ${LOGSERVER_TOKEN}"
+
+  parameters:
+    # Field containing the raw log line (Filebeat default: "message").
+    _msg_field: "message"
+
+    # Timestamp field populated by Filebeat.
+    _time_field: "@timestamp"
+
+    # Stream fields — low-cardinality identifiers for this log stream.
+    _stream_fields: "host.name,service,log_type,exim.flag,exim.flag_name,smf.service,dovecot.process,dovecot.level"
+
+    # Uncomment for first-run debugging
+    # debug: "1"
+
+  # compression_level: 1
+
+  # Tune for high volume (many messages/sec).
+  # worker:        4
+  # bulk_max_size: 512
+
+# =============================================================================
+# INTERNAL SETTINGS
+# =============================================================================
+# Registry: where Filebeat tracks read positions per file.
+filebeat.registry.path: /var/db/filebeat/registry
+
+# Disable auto-reload.
+filebeat.config.reload.enabled: false
+
+# In-memory event queue before flushing to the output.
+queue.mem:
+  events: 4096
+  flush.min_events: 256
+  flush.timeout: 5s
+
+# =============================================================================
+# FILEBEAT LOGGING
+# =============================================================================
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0640

@@ -1,8 +1,11 @@
 # List packages to add to your image one per line.
-https://packages.pkgsrc.pub/skylime-extra/SmartOS/2022Q4/x86_64/exim-4.96.1.tgz
+https://packages.pkgsrc.pub/skylime-extra/SmartOS/2025Q4/x86_64/libspf2-1.2.11nb3.tgz
+https://packages.pkgsrc.pub/skylime-extra/SmartOS/2025Q4/x86_64/exim-4.100.tgz
 clamav
-spamassassin
-https://packages.pkgsrc.pub/skylime-extra/SmartOS/2022Q4/x86_64/pyzor-1.1.1.tgz
+https://packages.pkgsrc.pub/skylime-extra/SmartOS/2025Q4/x86_64/rspamd-4.1.5nb1.tgz
 redis
 dovecot
 dovecot-pigeonhole
+unbound
+# logging (trunk because it's go anyway)
+https://packages.pkgsrc.pub/skylime-extra/SmartOS/trunk/x86_64/filebeat-9.4.2.tgz
