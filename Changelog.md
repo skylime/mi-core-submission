@@ -1,5 +1,11 @@
 # Changelog
 
+## 25.4.1
+
+### Fix
+
+* Dovecot munin plugin link [Thomas Merkel]
+
 ## 25.4.0
 
 ### New
