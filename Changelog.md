@@ -1,5 +1,16 @@
 # Changelog
 
+## 25.4.0
+
+### New
+
+* Update to 25.4.0 with newer exim, rspamd, filebeat [Thomas Merkel]
+
+    * Configure and install local unbound
+    * Upgrade and cleanup exim configuration
+    * Replace spamassassin with rspamd
+    * Add filebeat to support central logging
+
 ## 22.4.0 
 
 ### New
