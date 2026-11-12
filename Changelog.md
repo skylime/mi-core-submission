@@ -1,5 +1,12 @@
 # Changelog
 
+## 25.4.2
+
+### Bug Fixes
+
+- Cronjob issue with tidy database [Thomas Merkel]
+- Update to core-base 25.4.3, CVE-2026-111497 [Thomas Merkel]
+
 ## 25.4.1
 
 ### Fix
